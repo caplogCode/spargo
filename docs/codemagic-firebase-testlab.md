@@ -1,12 +1,21 @@
 # Codemagic + Firebase Test Lab
 
 Dieses Projekt ist fuer Codemagic so vorbereitet, dass jeder Push auf `main`
-Android und iOS in Firebase Test Lab ausfuehrt.
+Android und iOS in Firebase Test Lab ausfuehrt und danach Tester-Artefakte per
+Codemagic-Mail an die hinterlegten Tester verschickt.
 
 ## GitHub
 
 Codemagic kann erst laufen, wenn das Projekt als GitHub-Repository verbunden ist.
 Der Root dieses Projekts enthaelt dafuer `codemagic.yaml`.
+
+Lokales Git ist bereits auf `main` vorbereitet. Sobald ein GitHub-Repository
+existiert:
+
+```powershell
+git remote add origin https://github.com/<owner>/<repo>.git
+git push -u origin main
+```
 
 ## Codemagic Environment Groups
 
@@ -27,9 +36,15 @@ Cloud Storage Test-Ergebnis-Buckets.
 - `APP_STORE_CONNECT_ISSUER_ID`
 - `APP_STORE_CONNECT_KEY_IDENTIFIER`
 - `APP_STORE_CONNECT_PRIVATE_KEY`
+- optional `IOS_EXPORT_METHOD`: Standard ist `ad-hoc`
 
 Der Workflow nutzt `app-store-connect fetch-signing-files` fuer ein
 iOS-Development-Profil, weil Firebase Test Lab echte iPhones ausfuehrt.
+Fuer eine installierbare Tester-IPA wird zusaetzlich ein IPA-Artefakt gebaut.
+Bei `ad-hoc` nutzt Codemagic `IOS_APP_ADHOC`; die Testgeraete muessen dafuer im
+Apple Developer Account registriert sein. Fuer TestFlight/App-Store-Connect kann
+`IOS_EXPORT_METHOD` auf `app-store` gesetzt werden, dann wird `IOS_APP_STORE`
+genutzt.
 
 ## Workflow
 
@@ -49,6 +64,15 @@ Was passiert:
 6. iOS Signing vorbereiten
 7. iOS XCTest-ZIP fuer Firebase Test Lab bauen
 8. iPhone Firebase Test Lab ausfuehren
+9. Android Release-APK fuer Tester bauen
+10. iOS IPA fuer Tester bauen
+11. APK/IPA per Codemagic-Artefakt-Mail an die Tester schicken
+
+Tester-Mailadressen:
+
+- `markuskara25@gmail.com`
+- `benny_g_@outlook.com`
+- `suekrue.goektas@outlook.com`
 
 Der lokale CI-Gate fuehrt bewusst `test/widget_test.dart` aus. Die vorhandenen
 alten Responsive-Tests starten Firebase-abhaengige Screens ohne Bootstrap und

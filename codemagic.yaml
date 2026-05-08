@@ -12,6 +12,7 @@ workflows:
         - ios-signing
       vars:
         BUNDLE_ID: com.example.spargo
+        IOS_EXPORT_METHOD: ad-hoc
         FIREBASE_ANDROID_DEVICE: model=Pixel2,version=30,locale=de,orientation=portrait
         FIREBASE_IOS_DEVICE: model=iphone14,version=16.6,locale=de_DE,orientation=portrait
         FIREBASE_TEST_TIMEOUT: 12m
@@ -48,8 +49,13 @@ workflows:
         script: bash tool/ci/build_ios_xctest.sh
       - name: iPhone on Firebase Test Lab
         script: bash tool/ci/run_ios_firebase_test_lab.sh
+      - name: Build Android tester APK
+        script: bash tool/ci/build_android_tester_apk.sh
+      - name: Build iOS tester IPA
+        script: bash tool/ci/build_ios_tester_ipa.sh
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
+      - build/ios/ipa/*.ipa
       - build/ios_firebase_test_lab/ios_tests.zip
       - build/**/outputs/**/*.xml
       - firebase-debug.log
@@ -57,6 +63,8 @@ workflows:
       email:
         recipients:
           - markuskara25@gmail.com
+          - benny_g_@outlook.com
+          - suekrue.goektas@outlook.com
         notify:
           success: true
           failure: true
