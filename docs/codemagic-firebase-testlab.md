@@ -17,6 +17,25 @@ git remote add origin https://github.com/<owner>/<repo>.git
 git push -u origin main
 ```
 
+Zusaetzlich existiert eine GitHub-Actions-Absicherung unter
+`.github/workflows/mobile-distribution.yml`. Diese baut bei jedem Push auf
+`main` und per manuellem Button eine Android-APK. Mit
+`FIREBASE_SERVICE_ACCOUNT_JSON_BASE64` verteilt GitHub Actions die Android-APK
+direkt an die Tester ueber Firebase App Distribution.
+
+Eine installierbare iOS-IPA wird dort gebaut und verteilt, sobald folgende
+GitHub-Secrets gesetzt sind:
+
+- `IOS_CERTIFICATE_BASE64`
+- `IOS_CERTIFICATE_PASSWORD`
+- `IOS_PROVISIONING_PROFILE_BASE64`
+- `KEYCHAIN_PASSWORD`
+- `FIREBASE_SERVICE_ACCOUNT_JSON_BASE64`
+- `FIREBASE_IOS_APP_ID`
+
+Ohne Apple-Signing-Secrets kann iOS nur als unsigned Diagnose-Build gebaut
+werden; installierbare IPA-Auslieferung braucht immer Apple-Signing.
+
 ## Codemagic Environment Groups
 
 Lege in Codemagic zwei Environment Groups an.

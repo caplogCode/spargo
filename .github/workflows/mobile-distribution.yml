@@ -1,0 +1,142 @@
+name: Mobile tester builds
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  android-apk:
+    name: Android APK
+    runs-on: ubuntu-latest
+    env:
+      FIREBASE_ANDROID_APP_ID: 1:939702805071:android:723aac71ca06f051c2c03a
+      FIREBASE_SERVICE_ACCOUNT_JSON_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 }}
+      TESTER_EMAILS: markuskara25@gmail.com,benny_g_@outlook.com,suekrue.goektas@outlook.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Resolve packages
+        run: flutter pub get
+
+      - name: Test
+        run: flutter test test/widget_test.dart
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: spargo-android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+
+      - name: Distribute APK to Firebase App Distribution
+        if: ${{ env.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 != '' }}
+        run: |
+          SERVICE_ACCOUNT_PATH="$RUNNER_TEMP/firebase-service-account.json"
+          echo -n "$FIREBASE_SERVICE_ACCOUNT_JSON_BASE64" | base64 --decode > "$SERVICE_ACCOUNT_PATH"
+          export GOOGLE_APPLICATION_CREDENTIALS="$SERVICE_ACCOUNT_PATH"
+          npm install -g firebase-tools
+          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
+            --app "$FIREBASE_ANDROID_APP_ID" \
+            --testers "$TESTER_EMAILS" \
+            --release-notes "sparGO Android tester build from $GITHUB_SHA"
+
+  ios-ipa:
+    name: iOS IPA
+    runs-on: macos-latest
+    env:
+      FIREBASE_IOS_APP_ID: ${{ secrets.FIREBASE_IOS_APP_ID }}
+      FIREBASE_SERVICE_ACCOUNT_JSON_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 }}
+      IOS_CERTIFICATE_BASE64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
+      IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+      IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      TESTER_EMAILS: markuskara25@gmail.com,benny_g_@outlook.com,suekrue.goektas@outlook.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Resolve packages
+        run: flutter pub get
+
+      - name: Install CocoaPods
+        working-directory: ios
+        run: pod install
+
+      - name: Import Apple signing files
+        if: ${{ env.IOS_CERTIFICATE_BASE64 != '' && env.IOS_PROVISIONING_PROFILE_BASE64 != '' }}
+        run: |
+          CERTIFICATE_PATH="$RUNNER_TEMP/spargo_certificate.p12"
+          PROFILE_PATH="$RUNNER_TEMP/spargo_profile.mobileprovision"
+          KEYCHAIN_PATH="$RUNNER_TEMP/spargo-signing.keychain-db"
+
+          echo -n "$IOS_CERTIFICATE_BASE64" | base64 --decode > "$CERTIFICATE_PATH"
+          echo -n "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$PROFILE_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERTIFICATE_PATH" -P "$IOS_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/spargo.mobileprovision"
+
+      - name: Build unsigned iOS app for diagnostics
+        if: ${{ env.IOS_CERTIFICATE_BASE64 == '' || env.IOS_PROVISIONING_PROFILE_BASE64 == '' }}
+        run: flutter build ios --release --no-codesign
+
+      - name: Build signed IPA
+        if: ${{ env.IOS_CERTIFICATE_BASE64 != '' && env.IOS_PROVISIONING_PROFILE_BASE64 != '' }}
+        run: flutter build ipa --release
+
+      - name: Upload IPA
+        if: ${{ env.IOS_CERTIFICATE_BASE64 != '' && env.IOS_PROVISIONING_PROFILE_BASE64 != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: spargo-ios-ipa
+          path: build/ios/ipa/*.ipa
+          if-no-files-found: error
+
+      - name: Distribute IPA to Firebase App Distribution
+        if: ${{ env.IOS_CERTIFICATE_BASE64 != '' && env.IOS_PROVISIONING_PROFILE_BASE64 != '' && env.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 != '' && env.FIREBASE_IOS_APP_ID != '' }}
+        run: |
+          SERVICE_ACCOUNT_PATH="$RUNNER_TEMP/firebase-service-account.json"
+          echo -n "$FIREBASE_SERVICE_ACCOUNT_JSON_BASE64" | base64 --decode > "$SERVICE_ACCOUNT_PATH"
+          export GOOGLE_APPLICATION_CREDENTIALS="$SERVICE_ACCOUNT_PATH"
+          npm install -g firebase-tools
+          firebase appdistribution:distribute build/ios/ipa/*.ipa \
+            --app "$FIREBASE_IOS_APP_ID" \
+            --testers "$TESTER_EMAILS" \
+            --release-notes "sparGO iOS tester build from $GITHUB_SHA"
+
+      - name: Upload unsigned iOS build
+        if: ${{ env.IOS_CERTIFICATE_BASE64 == '' || env.IOS_PROVISIONING_PROFILE_BASE64 == '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: spargo-ios-unsigned-diagnostic
+          path: build/ios/iphoneos/Runner.app
+          if-no-files-found: warn
