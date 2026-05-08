@@ -38,21 +38,21 @@ workflows:
         script: |
           flutter test test/widget_test.dart
           flutter analyze --no-fatal-warnings --no-fatal-infos
-      - name: Android on Firebase Test Lab
-        script: bash tool/ci/run_android_firebase_test_lab.sh
       - name: Prepare iOS signing
         script: |
           keychain initialize
           app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_DEVELOPMENT --create
           keychain add-certificates
-      - name: Build iOS XCTest archive
-        script: bash tool/ci/build_ios_xctest.sh
-      - name: iPhone on Firebase Test Lab
-        script: bash tool/ci/run_ios_firebase_test_lab.sh
       - name: Build Android tester APK
         script: bash tool/ci/build_android_tester_apk.sh
       - name: Build iOS tester IPA
         script: bash tool/ci/build_ios_tester_ipa.sh
+      - name: Android on Firebase Test Lab
+        script: bash tool/ci/run_android_firebase_test_lab.sh
+      - name: Build iOS XCTest archive
+        script: bash tool/ci/build_ios_xctest.sh
+      - name: iPhone on Firebase Test Lab
+        script: bash tool/ci/run_ios_firebase_test_lab.sh
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
       - build/ios/ipa/*.ipa
