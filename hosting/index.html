@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>sparGO | Dein deutschlandweites Gutscheinheft</title>
+    <meta
+      name="description"
+      content="sparGO bringt Coupons, Stories, Wallet, Nearby-Favoriten und verifizierte Business-Aktionen in einen klaren mobilen Flow. Browser nur fuer Info, Rechtliches und Geraetefreigaben."
+    />
+    <meta name="theme-color" content="#db2149" />
+    <link rel="stylesheet" href="styles.css?v=20260417f" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap site-header__inner">
+        <div class="site-header__badge">
+          <span class="site-header__dot"></span>
+          <span>Nur fuer iPhone &amp; Android</span>
+        </div>
+        <nav aria-label="Bereiche">
+          <a href="#funktionen">Funktionen</a>
+          <a href="#business">Business</a>
+          <a href="#sicherheit">Sicherheit</a>
+          <a href="#rechtliches">Rechtliches</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap approval" id="approval">
+      <div class="approval__bar">
+        <div class="approval__state" id="approval-state">
+          <span class="spinner"></span>
+          <span id="approval-state-text">Freigabe laeuft</span>
+        </div>
+        <div class="approval__copy">
+          <strong id="approval-title">Neues Geraet wird bestaetigt.</strong>
+          <p id="approval-message">
+            Bitte einen kurzen Moment warten. Danach kannst du dich in sparGO
+            auf deinem neuen Geraet erneut anmelden.
+          </p>
+        </div>
+        <div class="approval__actions">
+          <button class="button button--secondary" id="approval-retry" hidden>
+            Erneut pruefen
+          </button>
+          <button class="button button--secondary" id="approval-reload" hidden>
+            Seite neu laden
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <section class="hero">
+        <div class="wrap hero__inner">
+          <div class="hero__copy">
+            <div class="eyebrow">Echte Orte. Echte Vorteile. Ein sauberer Flow.</div>
+            <img
+              class="hero__logo"
+              src="assets/branding/spargo_complete_logo.png"
+              alt="sparGO"
+            />
+            <h1>Dein deutschlandweites Gutscheinheft fuer echte Orte.</h1>
+            <p>
+              sparGO bringt Nearby-Coupons, Stories, Wallet, Merklisten,
+              verifizierte Business-Aktionen und serverseitig gepruefte
+              Drittquellen in einen mobilen Ablauf, der direkt klar bleibt.
+            </p>
+            <div class="hero__actions">
+              <a class="button button--primary" href="#funktionen">Was sparGO kann</a>
+              <a class="button button--secondary" href="#rechtliches">Impressum &amp; Datenschutz</a>
+            </div>
+            <div class="hero__metrics">
+              <div class="hero__metric">
+                <strong>Nah</strong>
+                <span>Coupons, Stories und Live-Vorteile rund um deinen echten Radius.</span>
+              </div>
+              <div class="hero__metric">
+                <strong>Klar</strong>
+                <span>Keine Katalogwueste. Relevante Orte, einloesbar und merkbar.</span>
+              </div>
+              <div class="hero__metric">
+                <strong>Direkt</strong>
+                <span>Vom Finden bis zum Einloesen in einem ruhigen, mobilen Produktfluss.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero__visual" aria-hidden="true">
+            <div class="hero__glow"></div>
+
+            <div class="device device--primary">
+              <div class="device__statusbar">
+                <span class="device__status-pill">Nur App</span>
+                <span class="device__status-pill">Wallet + Stories</span>
+              </div>
+              <div class="device__screen">
+                <div class="device__showcase-card">
+                  <span class="device__showcase-kicker">sparGO in kurz</span>
+                  <strong>Coupons zuerst, Menuechaos nie.</strong>
+                  <p>
+                    Nearby, Stories, Saves, Wallet und sichere Einloesung
+                    bleiben in einem ruhigen mobilen Flow zusammen.
+                  </p>
+                  <div class="device__chips">
+                    <span class="device__chip">Nearby</span>
+                    <span class="device__chip">Wallet</span>
+                    <span class="device__chip">Stories</span>
+                    <span class="device__chip">Verifiziert</span>
+                  </div>
+                </div>
+                <div class="device__footer-note">
+                  Browser hier nur fuer Info, Rechtliches und
+                  Geraetefreigabe.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="preview-strip">
+        <div class="wrap preview-strip__inner">
+          <div class="preview-strip__item">
+            <strong>Fuer Nutzer</strong>
+            <span>Entdecken, merken, aktivieren, einloesen und folgen ohne Umwege.</span>
+          </div>
+          <div class="preview-strip__item">
+            <strong>Fuer Businesses</strong>
+            <span>Eigene Coupons, Stories, QR-Flow, Profilpflege und Insights im selben System.</span>
+          </div>
+          <div class="preview-strip__item">
+            <strong>Fuer Vertrauen</strong>
+            <span>Business-Verifikation, ein aktives Geraet, serverseitige Scans und klare Kennzeichnung.</span>
+          </div>
+          <div class="preview-strip__item">
+            <strong>Fuer Klarheit</strong>
+            <span>Browser hier nur fuer Infos, Rechtliches und Geraetefreigaben.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--soft" id="funktionen">
+        <div class="wrap">
+          <div class="section__intro">
+            <div>
+              <div class="section__eyebrow">Funktionen</div>
+              <h2 class="section__title">Alles, was in der App schnell wirken muss.</h2>
+            </div>
+            <p class="section__copy">
+              sparGO bleibt bewusst mobil gedacht: Nahbereich, Kartenlogik,
+              Gutscheinaktivierung, Wallet, Stories, Bewertungen, Merklisten,
+              Follow-Flow und serverseitig gepruefte oeffentliche Quellen
+              greifen in einem einzigen, ruhigen Produkt zusammen.
+            </p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature">
+              <div class="feature__kicker">Nearby &amp; Radius</div>
+              <h3>Relevanz nach echtem Ort statt Zufall.</h3>
+              <p>
+                Stadt, Viertel und Radius steuern, was du wirklich sehen sollst.
+                Direkt angelegte Business-Coupons bleiben oben. Gepruefte
+                Drittquellen werden sauber ergaenzt.
+              </p>
+            </article>
+            <article class="feature">
+              <div class="feature__kicker">Wallet</div>
+              <h3>Merken, aktivieren und einloesen ohne Medienbruch.</h3>
+              <p>
+                Gespeicherte und aktivierte Vorteile landen in einem klaren Wallet.
+                Die Einloesung bleibt nachvollziehbar, schnell und auf dem
+                aktuellen Geraet geschuetzt.
+              </p>
+            </article>
+            <article class="feature">
+              <div class="feature__kicker">Stories</div>
+              <h3>Orte wirken nicht nur statisch, sondern lebendig.</h3>
+              <p>
+                Stories zeigen, was gerade lohnt. Unternehmen mit aktiver Story
+                werden sichtbar markiert und lassen sich direkt aus dem Feed
+                heraus entdecken.
+              </p>
+            </article>
+            <article class="feature">
+              <div class="feature__kicker">Saves &amp; Folgen</div>
+              <h3>Merkliste und Lieblingsorte bleiben synchron.</h3>
+              <p>
+                Lieblingsorte, Saves und Follow-Entscheidungen bauen deinen Feed
+                weiter aus, statt ihn aufzublaehen. So wird die Auswahl mit der
+                Zeit besser statt lauter.
+              </p>
+            </article>
+            <article class="feature">
+              <div class="feature__kicker">Bewertungen</div>
+              <h3>Feedback bleibt bearbeitbar und nachvollziehbar.</h3>
+              <p>
+                Bewertungen gehoeren zum Ort, nicht zu irgendeinem losen
+                Kommentarfeed. So entsteht Relevanz fuer Nutzer und
+                Businesses im selben Produktfluss.
+              </p>
+            </article>
+            <article class="feature feature--dark">
+              <div class="feature__kicker">Serverseitige Drittquellen</div>
+              <h3>Oeffentliche Coupons werden nicht blind uebernommen.</h3>
+              <p>
+                Freie Quellen werden zentral geprueft, gekennzeichnet,
+                gecacht und regelmaessig neu bewertet. Dadurch bleibt der
+                Nutzerfluss mobil leicht, waehrend die schwere Arbeit auf dem
+                Server passiert.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="business">
+        <div class="wrap">
+          <div class="section__intro">
+            <div>
+              <div class="section__eyebrow">Business</div>
+              <h2 class="section__title">Fuer Teams, die lokal sichtbar und direkt einloesbar sein wollen.</h2>
+            </div>
+            <p class="section__copy">
+              Businesses arbeiten in sparGO nicht neben dem Nutzerprodukt,
+              sondern mitten darin: Profil, Coupon-Studio, Story-Flow,
+              Verifikation, QR-Einloesung und Dashboard bilden ein
+              zusammenhaengendes System.
+            </p>
+          </div>
+          <div class="section__actions">
+            <a class="button button--primary" href="/business-register">Business Studio starten</a>
+            <a class="button button--secondary" href="/app/#/business-register">Direkt zum Web-Login</a>
+          </div>
+
+          <div class="trust-grid">
+            <div class="trust-list">
+              <div class="trust-item">
+                <div class="trust-item__index">01</div>
+                <div>
+                  <strong>Coupons und Stories direkt aus dem Business-Studio</strong>
+                  <p>
+                    Bilder, Texte, Laufzeit, Regeln und Sichtbarkeit werden dort
+                    gepflegt, wo sie spaeter auch wirklich im Nutzerfluss
+                    auftauchen.
+                  </p>
+                </div>
+              </div>
+              <div class="trust-item">
+                <div class="trust-item__index">02</div>
+                <div>
+                  <strong>Verifikation statt Demologik</strong>
+                  <p>
+                    E-Mail-Domain, Website und weitere Zuordnungen sorgen
+                    dafuer, dass nicht irgendein Fremder ein Unternehmen
+                    uebernimmt.
+                  </p>
+                </div>
+              </div>
+              <div class="trust-item">
+                <div class="trust-item__index">03</div>
+                <div>
+                  <strong>QR- und Einloesungsfluss mit klarer Verantwortlichkeit</strong>
+                  <p>
+                    Der Gutschein zeigt, das Business prueft, sparGO haelt
+                    den Status im System sauber zusammen.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <article class="trust-panel">
+              <div class="trust-panel__image">
+                <img src="assets/branding/spargo_splashscreen.png" alt="" />
+              </div>
+              <div class="trust-panel__body">
+                <h3>Keine zweite, halbfertige Web-App nebenbei.</h3>
+                <p>
+                  Diese Seite erklaert sparGO, zeigt das Produkt sauber nach
+                  aussen und traegt Rechtliches sowie Geraetefreigaben.
+                  Das eigentliche Produkt bleibt dort, wo es hingehoert: in der
+                  mobilen App.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--soft" id="sicherheit">
+        <div class="wrap">
+          <div class="section__intro">
+            <div>
+              <div class="section__eyebrow">Sicherheit</div>
+              <h2 class="section__title">Sensible Flows duerfen nicht wackeln.</h2>
+            </div>
+            <p class="section__copy">
+              sparGO verbindet Nutzerkomfort mit klaren Schutzmechanismen:
+              Business-Verifikation, Geraetefreigabe, serverseitige
+              Coupon-Pruefung, Wallet-Schutz und ein nachvollziehbarer
+              Produktzustand statt Wildwuchs.
+            </p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature">
+              <div class="feature__kicker">Ein aktives Geraet</div>
+              <h3>Neue Logins werden nicht einfach ungefragt durchgedrueckt.</h3>
+              <p>
+                Wenn ein Konto auf ein neues Geraet wechselt, wird der Vorgang
+                per Mail bestaetigt. So bleibt klar, welches Geraet gerade
+                aktiv sein darf.
+              </p>
+            </article>
+            <article class="feature">
+              <div class="feature__kicker">Wallet-Schutz</div>
+              <h3>QR-sensitive Flaechen bleiben auf dem Geraet abgesichert.</h3>
+              <p>
+                Gerade dort, wo Einloesung und Pass sichtbar werden, ist der
+                Schutz nicht nur Deko, sondern Teil der Produktlogik.
+              </p>
+            </article>
+            <article class="feature">
+              <div class="feature__kicker">Quellenklarheit</div>
+              <h3>Direkt, verifiziert und oeffentlich gefunden bleiben trennbar.</h3>
+              <p>
+                Wer ein Angebot sieht, soll sofort erkennen, ob es direkt aus
+                sparGO kommt oder aus einer geprueften Drittquelle in den Flow
+                uebernommen wurde.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section legal-shell" id="rechtliches">
+        <div class="wrap">
+          <div class="section__intro">
+            <div>
+              <div class="section__eyebrow">Rechtliches</div>
+              <h2 class="section__title">Impressum, Datenschutz und Quellen sauber an einem Ort.</h2>
+            </div>
+            <p class="section__copy">
+              Diese Seite buendelt die rechtlich relevanten Basisinformationen
+              fuer den oeffentlichen Auftritt von sparGO. Wo echte Betreiberdaten
+              im Projekt noch nicht hinterlegt sind, wird das offen markiert statt
+              mit Fantasieangaben kaschiert.
+            </p>
+          </div>
+
+          <div class="legal-list">
+            <details class="legal" open>
+              <summary>
+                <span>Impressum</span>
+                <strong>Angaben nach Paragraf 5 DDG</strong>
+              </summary>
+              <div class="legal__content">
+                <div class="legal__facts">
+                  <div class="legal__fact">
+                    <strong>Angebot</strong>
+                    <span>sparGO</span>
+                  </div>
+                  <div class="legal__fact">
+                    <strong>Website</strong>
+                    <a href="https://spargo-app.web.app">https://spargo-app.web.app</a>
+                  </div>
+                  <div class="legal__fact">
+                    <strong>Betreiber</strong>
+                    <span>Noch nicht hinterlegt</span>
+                  </div>
+                  <div class="legal__fact">
+                    <strong>Verantwortliche Person</strong>
+                    <span>Noch nicht hinterlegt</span>
+                  </div>
+                  <div class="legal__fact">
+                    <strong>Postanschrift</strong>
+                    <span>Noch nicht hinterlegt</span>
+                  </div>
+                  <div class="legal__fact">
+                    <strong>E-Mail</strong>
+                    <span>Noch nicht hinterlegt</span>
+                  </div>
+                  <div class="legal__fact">
+                    <strong>Telefon</strong>
+                    <span>Noch nicht hinterlegt</span>
+                  </div>
+                  <div class="legal__fact">
+                    <strong>Register / USt-ID</strong>
+                    <span>Noch nicht hinterlegt</span>
+                  </div>
+                </div>
+                <div class="legal__alert">
+                  Fuer einen vollstaendig rechtsverbindlichen oeffentlichen
+                  Auftritt muessen hier noch die echten Betreiber- und Kontaktdaten
+                  eingetragen werden. Diese Seite erfindet sie bewusst nicht.
+                </div>
+              </div>
+            </details>
+
+            <details class="legal">
+              <summary>
+                <span>Datenschutz</span>
+                <strong>Welche Daten sparGO verarbeitet und warum</strong>
+              </summary>
+              <div class="legal__content">
+                <p>
+                  sparGO verarbeitet Konto-, Profil-, Favoriten-, Wallet-,
+                  Bewertungs-, Story- und Businessdaten, damit Anmeldung,
+                  personalisierte Gutscheine, Einloesungen, Bewertungen und
+                  Business-Funktionen sauber funktionieren.
+                </p>
+                <p>
+                  Standortdaten werden nur nach ausdruecklicher Freigabe
+                  verwendet. Wenn Stadt oder Radius manuell gesetzt werden, nutzt
+                  sparGO diese Angaben statt einer automatischen Abfrage.
+                </p>
+                <p>
+                  Oeffentliche Coupons stammen aus frei sichtbaren Quellen,
+                  werden als Drittquelle markiert und serverseitig regelmaessig
+                  geprueft, bevor sie erneut in den sichtbaren Flow gelangen.
+                </p>
+                <p>
+                  Technisch nutzt sparGO Firebase Authentication, Cloud Firestore,
+                  Cloud Storage, Cloud Functions und Google Maps Platform fuer
+                  Karten-, Geocoding- und Places-Daten.
+                </p>
+                <div class="legal__facts">
+                  <div class="legal__fact">
+                    <strong>Stand Datenschutzhinweise</strong>
+                    <span>17. April 2026</span>
+                  </div>
+                  <div class="legal__fact">
+                    <strong>Kontakt Datenschutz</strong>
+                    <span>Noch nicht hinterlegt</span>
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <details class="legal">
+              <summary>
+                <span>Nutzung &amp; Quellen</span>
+                <strong>Hinweise zu Coupons, Businesses und Drittquellen</strong>
+              </summary>
+              <div class="legal__content">
+                <p>
+                  Direkte Coupons aus sparGO und gepruefte oeffentliche
+                  Drittquellen laufen im selben Produktfluss, bleiben aber klar
+                  gekennzeichnet.
+                </p>
+                <p>
+                  Die tatsaechliche Einloesbarkeit, Laufzeit und Verfuegbarkeit
+                  eines Angebots richtet sich immer nach dem jeweiligen Unternehmen
+                  oder der extern veroeffentlichten Quelle.
+                </p>
+                <p>
+                  Business-Konten sollen nur von Personen verwendet werden, die
+                  zum Unternehmen gehoeren. sparGO verknuepft Registrierungen
+                  deshalb mit Website-Domain, Business-E-Mail und weiteren
+                  Verifikationssignalen.
+                </p>
+              </div>
+            </details>
+
+            <details class="legal">
+              <summary>
+                <span>Open Source</span>
+                <strong>Technische Grundlagen und Lizenzhinweise</strong>
+              </summary>
+              <div class="legal__content">
+                <p>
+                  sparGO baut technisch unter anderem auf Flutter, Firebase,
+                  Google Maps Platform und weiteren Bibliotheken auf. Die mobile
+                  App fuehrt die zugehoerigen Lizenzhinweise fuer Open-Source-
+                  Komponenten zusaetzlich direkt im Produkt.
+                </p>
+                <div class="legal__facts">
+                  <div class="legal__fact">
+                    <strong>Produkt-Stack</strong>
+                    <span>Flutter, Firebase, Google Maps Platform</span>
+                  </div>
+                  <div class="legal__fact">
+                    <strong>Lizenzhinweise</strong>
+                    <span>Zusaetzlich innerhalb der mobilen App verfuegbar</span>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap footer__inner">
+        <div class="footer__brand">
+          <strong>sparGO</strong>
+          <p>
+            Fuer echte Orte, klare Vorteile und einen mobilen Produktfluss,
+            der nicht erst im Browser verstanden werden muss.
+          </p>
+        </div>
+        <div class="footer__links">
+          <a href="#funktionen">Funktionen</a>
+          <a href="#business">Business</a>
+          <a href="#sicherheit">Sicherheit</a>
+          <a href="#rechtliches">Rechtliches</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="app.js?v=20260417f"></script>
+  </body>
+</html>

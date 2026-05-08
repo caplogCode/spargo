@@ -1,0 +1,659 @@
+<div class="business-auth-page" [class.is-register]="mode() === 'register'">
+  <section class="login-shell" [class.is-active]="mode() === 'login'" [class.is-inactive]="mode() !== 'login'">
+    <aside class="brand-panel" aria-label="sparGO Business Studio">
+      <img class="brand-panel__logo" src="/branding/spargo_complete_logo.png" alt="sparGO" />
+
+      <div class="brand-panel__copy">
+        <h1>
+          <span>Dein Business.</span>
+          <span>Verifiziert.</span>
+          <span class="accent">Verbunden.</span>
+        </h1>
+      </div>
+
+      <div class="brand-panel__rings" aria-hidden="true"></div>
+      <div class="brand-panel__glow" aria-hidden="true"></div>
+    </aside>
+
+    <section class="auth-card">
+      <header class="auth-card__topbar">
+        <div class="auth-card__topbar-group">
+          <div class="pill pill--brand">
+            <span class="pill__icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 7V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1" />
+                <path d="M4 9h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9z" />
+                <path d="M4 11.5h16" />
+              </svg>
+            </span>
+            <span>Business Studio</span>
+          </div>
+
+          <button class="pill pill--ghost" type="button" (click)="setMode('register')">
+            Business registrieren
+          </button>
+        </div>
+
+        <button class="pill pill--locale" type="button">
+          <span class="pill__icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M3 12h18" />
+              <path d="M12 3a15 15 0 0 1 0 18" />
+              <path d="M12 3a15 15 0 0 0 0 18" />
+            </svg>
+          </span>
+          <span>DE</span>
+          <ion-icon class="pill__chevron" [icon]="chevronDownIcon" aria-hidden="true"></ion-icon>
+        </button>
+      </header>
+
+      <div class="auth-card__copy">
+        <h2>Willkommen zurück</h2>
+        <p>Melde dich mit deinem Studio-Zugang an und arbeite direkt weiter.</p>
+      </div>
+
+      <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="login()" autocomplete="on">
+        <label class="auth-field">
+          <span>Business E-Mail</span>
+          <div class="input-shell">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h16v10H4z" />
+                <path d="M5 8l7 6 7-6" />
+              </svg>
+            </span>
+            <input type="email" formControlName="email" placeholder="name@deinbusiness.de" autocomplete="username" />
+          </div>
+        </label>
+
+        <label class="auth-field">
+          <span>Passwort</span>
+          <div class="input-shell">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 11V8a5 5 0 0 1 10 0v3" />
+                <rect x="5" y="11" width="14" height="10" rx="2" />
+              </svg>
+            </span>
+            <input type="password" formControlName="password" placeholder="Dein Passwort" autocomplete="current-password" />
+            <span class="input-tail">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </span>
+          </div>
+        </label>
+
+        <div class="auth-utility-row">
+          <label class="remember-toggle">
+            <input type="checkbox" checked />
+            <span>Angemeldet bleiben</span>
+          </label>
+          <button class="text-link" type="button" [disabled]="resetBusy()" (click)="sendReset()">
+            Passwort vergessen?
+          </button>
+        </div>
+
+        <button class="primary-cta" type="submit" [disabled]="registerBusy()">
+          <span *ngIf="!registerBusy()">Einloggen</span>
+          <span *ngIf="registerBusy()">Einen Moment...</span>
+          <span class="cta-arrow">&rarr;</span>
+        </button>
+
+        <div class="security-note">
+          <span class="security-note__icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3l7 3v5c0 4.7-2.8 8.7-7 10-4.2-1.3-7-5.3-7-10V6l7-3z" />
+              <path d="M9.2 11.8l1.9 1.9 3.7-4.1" />
+            </svg>
+          </span>
+          <p>Deine Daten sind sicher. Wir schützen deine Informationen mit moderner Verschlüsselung.</p>
+        </div>
+      </form>
+
+      <div class="error-banner" *ngIf="activeError()">
+        {{ activeError() }}
+      </div>
+    </section>
+  </section>
+
+  <section class="register-shell" [class.is-active]="mode() === 'register'" [class.is-inactive]="mode() !== 'register'">
+    <header class="workspace-topbar">
+      <div class="workspace-topbar__brand">
+        <img src="/branding/spargo_complete_logo.png" alt="sparGO" />
+        <div>
+          <span>Business Studio</span>
+          <strong>Registrieren</strong>
+        </div>
+      </div>
+
+      <div class="workspace-topbar__actions">
+        <button class="pill pill--ghost" type="button" (click)="setMode('login')">Zum Login</button>
+        <button class="pill pill--locale" type="button">
+          <span class="pill__icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M3 12h18" />
+              <path d="M12 3a15 15 0 0 1 0 18" />
+              <path d="M12 3a15 15 0 0 0 0 18" />
+            </svg>
+          </span>
+          <span>DE</span>
+          <ion-icon class="pill__chevron" [icon]="chevronDownIcon" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+    </header>
+
+    <section class="register-hero">
+      <div class="register-hero__copy">
+        <h1>Business registrieren</h1>
+        <p>Wähle deinen Standort und richte danach deinen Studio-Zugang sauber ein.</p>
+      </div>
+
+      <div class="register-hero__stats">
+        <article class="hero-step-card" [class.is-active]="currentRegisterStep() === 1" [class.is-done]="currentRegisterStep() > 1" (click)="goToRegisterStep(1)">
+          <strong>1</strong>
+          <span>Standort finden</span>
+        </article>
+        <article class="hero-step-card" [class.is-active]="currentRegisterStep() === 2" [class.is-done]="currentRegisterStep() > 2" [class.is-disabled]="!selectedPlace()" (click)="goToRegisterStep(2)">
+          <strong>2</strong>
+          <span>Business bestätigen</span>
+        </article>
+        <article class="hero-step-card" [class.is-active]="currentRegisterStep() === 3" [class.is-disabled]="!verificationLink()" (click)="goToRegisterStep(3)">
+          <strong>3</strong>
+          <span>Zugang festlegen</span>
+        </article>
+      </div>
+    </section>
+
+    <div class="register-workspace">
+      <section class="guided-action-card" *ngIf="guidedAction() as guidance" [class.is-warning]="guidance.tone === 'warning'" [class.is-success]="guidance.tone === 'success'">
+        <div class="guided-action-card__copy">
+          <span class="mini-label">Nächster Schritt</span>
+          <strong>{{ guidance.title }}</strong>
+          <p>{{ guidance.detail }}</p>
+        </div>
+        <button class="secondary-cta secondary-cta--inline" type="button" *ngIf="guidance.ctaLabel" (click)="triggerGuidedAction()">
+          <span>{{ guidance.ctaLabel }}</span>
+        </button>
+      </section>
+
+      <main class="register-stage">
+          <section class="workspace-card workspace-panel workspace-panel--search" *ngIf="currentRegisterStep() === 1">
+            <div class="workspace-card__head">
+              <div>
+                <span class="mini-label">Schritt 1</span>
+                <h3>Standort auswählen</h3>
+                <p>Suche dein Business direkt über Google Places.</p>
+              </div>
+            </div>
+
+            <div class="search-box">
+              <div class="input-shell input-shell--search">
+                <span class="input-icon">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="6"></circle>
+                    <path d="M20 20l-4.2-4.2"></path>
+                  </svg>
+                </span>
+                <input type="search" [value]="query()" (input)="onSearchInput(($any($event.target)).value)" placeholder="Business-Name oder Business + Stadt" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              </div>
+              <button class="secondary-cta secondary-cta--search" type="button" [disabled]="searchBusy()" (click)="searchPlaces()">
+                <span *ngIf="!searchBusy()">Suchen</span>
+                <span *ngIf="searchBusy()">Lädt...</span>
+              </button>
+            </div>
+
+            <div class="search-suggestions-shell" *ngIf="searchSuggestions().length || suggestionsBusy()">
+              <div class="search-suggestions-shell__head">
+                <span class="mini-label">Vorschläge</span>
+                <p>Tippe weiter oder wähle direkt einen passenden Ort aus.</p>
+              </div>
+
+              <div class="search-suggestions">
+              <button type="button" class="search-suggestion" *ngFor="let suggestion of searchSuggestions()" (click)="chooseSuggestion(suggestion)">
+                <span class="search-suggestion__pulse" aria-hidden="true"></span>
+                <strong>{{ suggestion.title }}</strong>
+                <span>{{ suggestion.addressLine }}</span>
+              </button>
+              <div class="search-suggestion search-suggestion--loading" *ngIf="suggestionsBusy() && !searchSuggestions().length">
+                <strong>Vorschläge werden vorbereitet</strong>
+                <span>Google Places ergänzt gerade passende Orte.</span>
+              </div>
+            </div>
+            </div>
+
+            <div class="search-results" *ngIf="searchResults().length">
+              <button type="button" class="search-result" *ngFor="let place of searchResults()" (click)="choosePlace(place)">
+                <span class="search-result__accent" aria-hidden="true"></span>
+                <div class="search-result__copy">
+                  <strong>{{ place.name }}</strong>
+                  <span>{{ place.address }}</span>
+                  <em class="search-result__registered" *ngIf="place.registeredBusinessId">
+                    Bereits registriert im sparGO Business Studio
+                  </em>
+                </div>
+                <small class="search-result__meta">{{ place.registeredBusinessId ? 'Registriert' : place.primaryType }}</small>
+              </button>
+            </div>
+
+            <div class="selected-place selected-place--inline" *ngIf="selectedPlace() as place">
+              <div class="selected-place__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 10h14v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V10z" />
+                  <path d="M6 10l1-4h10l1 4" />
+                  <path d="M9 20v-5h6v5" />
+                </svg>
+              </div>
+              <div class="selected-place__copy">
+                <strong>{{ place.name }}</strong>
+                <p>{{ place.address }}</p>
+              </div>
+              <button class="text-link" type="button" (click)="clearPlace()">Ändern</button>
+            </div>
+
+            <div class="panel-actions" *ngIf="selectedPlace() as place">
+              <div class="panel-actions__summary">
+                <span class="mini-label">Ausgewählt</span>
+                <strong>{{ place.name }}</strong>
+              </div>
+              <button class="primary-cta primary-cta--inline" type="button" (click)="goToRegisterStep(2)">
+                <span>Weiter zu Schritt 2</span>
+                <span class="cta-arrow">&rarr;</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="workspace-card workspace-card--verification workspace-panel workspace-panel--verification" *ngIf="currentRegisterStep() === 2 && selectedPlace()">
+            <div class="workspace-card__head">
+              <div>
+                <span class="mini-label">Schritt 2</span>
+                <h3>Business bestätigen</h3>
+                <p>Wähle einen Verifizierungsweg. Die Bühne bleibt klar, ruhig und fokussiert.</p>
+              </div>
+            </div>
+
+            <div class="selected-place selected-place--quiet" *ngIf="selectedPlace() as place">
+              <div class="selected-place__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 10h14v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V10z" />
+                  <path d="M6 10l1-4h10l1 4" />
+                  <path d="M9 20v-5h6v5" />
+                </svg>
+              </div>
+              <div class="selected-place__copy">
+                <strong>{{ place.name }}</strong>
+                <p>{{ place.address }}</p>
+              </div>
+              <button class="text-link" type="button" (click)="goToRegisterStep(1)">Standort ändern</button>
+            </div>
+
+            <div class="workspace-overview">
+              <article class="workspace-overview__card">
+                <span class="mini-label">Status</span>
+                <strong>{{ verificationLink() ? 'Identität bestätigt' : 'Prüfung läuft noch' }}</strong>
+                <p>{{ verificationLink() ? 'Schritt 3 ist vorbereitet und kann direkt abgeschlossen werden.' : 'Sobald Dokument, Ort und Identität sauber zusammenpassen, führen wir dich direkt weiter.' }}</p>
+              </article>
+              <article class="workspace-overview__card">
+                <span class="mini-label">Signale</span>
+                <strong>OCR, KI, Ort und Firmensignale</strong>
+                <p>Wir lesen Nachweise aus, gleichen Namen und Adresse ab und prüfen zusätzlich Website- und Unternehmenssignale, wenn sie vorhanden sind.</p>
+              </article>
+            </div>
+
+            <section class="journey-rail">
+              <article class="journey-step" [class.is-active]="!documentReview()" [class.is-complete]="!!documentReview() || !!verificationLink()">
+                <span class="journey-step__index">01</span>
+                <div>
+                  <strong>Nachweis hochladen</strong>
+                  <p>Wir binden deinen amtlichen Nachweis direkt an genau diesen Standort.</p>
+                </div>
+              </article>
+              <article class="journey-step" [class.is-active]="!!progressSteps().length" [class.is-complete]="!!verificationLink()">
+                <span class="journey-step__index">02</span>
+                <div>
+                  <strong>KI und Server prüfen</strong>
+                  <p>Ort, Identität, Website und zusätzliche Unternehmenssignale werden zusammengeführt.</p>
+                </div>
+              </article>
+              <article class="journey-step" [class.is-active]="!!verificationLink()" [class.is-complete]="currentRegisterStep() === 3">
+                <span class="journey-step__index">03</span>
+                <div>
+                  <strong>Zugang freigeben</strong>
+                  <p>Schritt 3 öffnet sich erst nach bestätigter Verifikation.</p>
+                </div>
+              </article>
+            </section>
+
+            <div class="verification-stage">
+              <article class="verification-method verification-method--documents verification-method--focus">
+                <div class="verification-method__copy">
+                  <span class="mini-label">Sicherer Verifizierungsweg</span>
+                  <h4>Unternehmen mit Unterlagen bestätigen</h4>
+                  <p>Lade einen offiziellen Nachweis hoch. Unsere Prüfung nutzt OCR, KI, Standortabgleich und zusätzliche Firmensignale, damit du nicht an einem einzelnen Schnellweg hängen bleibst.</p>
+                  <div class="verification-inline-note">
+                    Wenn vorhanden, prüfen wir zusätzlich Website, Impressum und öffentliche Unternehmenssignale automatisch mit.
+                  </div>
+                </div>
+
+                <div class="verification-method__form">
+                  <label class="auth-field">
+                    <span>Verantwortliche Person</span>
+                    <div class="input-shell">
+                      <span class="input-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <circle cx="12" cy="8" r="4"></circle>
+                          <path d="M5 20c.7-3.4 3.3-5 7-5s6.3 1.6 7 5"></path>
+                        </svg>
+                      </span>
+                      <input type="text" [formControl]="registerForm.controls.claimantName" placeholder="Name laut Nachweis" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" />
+                    </div>
+                  </label>
+
+                  <label class="auth-field">
+                    <span>Business-E-Mail</span>
+                    <div class="input-shell">
+                      <span class="input-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M4 7h16v10H4z" />
+                          <path d="M5 8l7 6 7-6" />
+                        </svg>
+                      </span>
+                      <input type="email" [formControl]="registerForm.controls.contactEmail" placeholder="kontakt@deinbusiness.de" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                    </div>
+                  </label>
+
+                  <label class="upload-shell">
+                    <input type="file" accept=".pdf,.png,.jpg,.jpeg" (change)="onDocumentSelected($event)" />
+                    <span>{{ chosenDocumentName() || 'Offizielle Unterlage auswählen' }}</span>
+                  </label>
+
+                  <section
+                    class="captcha-card"
+                    [class.is-ready]="captchaStatus() === 'ready'"
+                    [class.is-error]="captchaStatus() === 'error' || captchaStatus() === 'expired'">
+                    <div class="captcha-card__head">
+                      <div>
+                        <span class="mini-label">Schritt 2 von 3</span>
+                        <strong>Sicherheits-Check anklicken</strong>
+                      </div>
+                      <span class="captcha-status-pill" [class.is-ready]="captchaStatus() === 'ready'">
+                        {{ captchaStatus() === 'ready' ? 'Bestätigt' : 'Erforderlich' }}
+                      </span>
+                      <button class="text-link" type="button" (click)="retryCaptcha()">
+                        Neu laden
+                      </button>
+                    </div>
+                    <ol class="captcha-steps">
+                      <li>Datei oben auswählen.</li>
+                      <li>Hier im Sicherheitsfeld die Cloudflare-Box bestätigen.</li>
+                      <li>Danach auf „Unterlage prüfen“ klicken.</li>
+                    </ol>
+                    <p class="captcha-card__copy">{{ captchaMessage() }}</p>
+                    <div id="spargo-turnstile" class="captcha-card__widget" aria-live="polite"></div>
+                    <p class="captcha-card__help" *ngIf="captchaStatus() === 'loading' || captchaStatus() === 'error' || captchaStatus() === 'expired'">
+                      Wenn keine Box sichtbar ist: „Neu laden“ klicken. Falls sie weiterhin fehlt, blockiert meist ein Adblocker oder Browser-Schutz den Cloudflare-Check.
+                    </p>
+                  </section>
+
+                  <button class="secondary-cta secondary-cta--full" type="button" [disabled]="documentBusy() || captchaStatus() !== 'ready'" (click)="verifyDocument()">
+                    <span *ngIf="!documentBusy()">Unterlage prüfen</span>
+                    <span *ngIf="documentBusy()">Prüfung läuft...</span>
+                  </button>
+                </div>
+              </article>
+            </div>
+
+            <section class="document-guidance-card" *ngIf="documentFailureDetails() as details">
+              <div class="document-guidance-card__head">
+                <div>
+                  <span class="mini-label">Prüfhinweis</span>
+                  <h4>Wir zeigen dir jetzt direkt, was schon passt und was noch fehlt</h4>
+                </div>
+                <button class="secondary-cta secondary-cta--inline" type="button" (click)="triggerGuidedAction()">
+                  <span>Direkt zum Fix</span>
+                </button>
+              </div>
+
+              <p class="document-guidance-card__summary">{{ details.summary }}</p>
+
+              <div class="document-guidance-grid">
+                <article class="document-guidance-block document-guidance-block--good">
+                  <span class="mini-label">Schon erkannt</span>
+                  <ul>
+                    <li *ngFor="let item of details.matchedSignals">{{ item }}</li>
+                  </ul>
+                </article>
+
+                <article class="document-guidance-block document-guidance-block--missing">
+                  <span class="mini-label">Jetzt nachschärfen</span>
+                  <ul>
+                    <li *ngFor="let item of details.missingSignals">{{ item }}</li>
+                  </ul>
+                </article>
+              </div>
+
+              <div class="document-guidance-grid">
+                <article class="document-guidance-block">
+                  <span class="mini-label">Live erkannt</span>
+                  <ul>
+                    <li *ngIf="details.extracted.documentType">Dokumenttyp: {{ details.extracted.documentType }}</li>
+                    <li *ngIf="details.extracted.legalEntityName">Firma: {{ details.extracted.legalEntityName }}</li>
+                    <li *ngIf="details.extracted.tradeName">Handelsname: {{ details.extracted.tradeName }}</li>
+                    <li *ngIf="details.extracted.proprietorName">Inhaber: {{ details.extracted.proprietorName }}</li>
+                    <li *ngIf="details.extracted.issuingAuthority">Behörde: {{ details.extracted.issuingAuthority }}</li>
+                  </ul>
+                </article>
+
+                <article class="document-guidance-block">
+                  <span class="mini-label">Adresssignale</span>
+                  <ul>
+                    <li *ngIf="details.extracted.street">Straße: {{ details.extracted.street }}</li>
+                    <li *ngIf="details.extracted.postalCode">PLZ: {{ details.extracted.postalCode }}</li>
+                    <li *ngIf="details.extracted.city">Ort: {{ details.extracted.city }}</li>
+                    <li *ngIf="!details.extracted.street && !details.extracted.postalCode && !details.extracted.city">
+                      Noch keine stabilen Adressdaten erkannt
+                    </li>
+                  </ul>
+                </article>
+              </div>
+            </section>
+
+            <div class="progress-shell" *ngIf="progressSteps().length">
+              <div class="progress-shell__head">
+                <span class="mini-label">Live-Status</span>
+                <p>Wir führen dich automatisch durch den gerade aktiven Prüfpfad.</p>
+              </div>
+
+            <div class="progress-panel">
+              <article class="progress-item" *ngFor="let item of progressSteps()">
+                <span class="progress-bullet" [class.active]="item.state === 'active'" [class.done]="item.state === 'done'" [class.error]="item.state === 'error'"></span>
+                <div>
+                  <strong>{{ item.title }}</strong>
+                  <p>{{ item.detail }}</p>
+                </div>
+              </article>
+            </div>
+            </div>
+
+            <div class="verification-status-strip" *ngIf="!progressSteps().length">
+              <article class="status-chip status-chip--quiet" [class.status-chip--done]="!!documentReview()">
+                <strong>Unterlagen</strong>
+                <span>OCR, KI und Registersignale prüfen Name, Ort und Nachweise serverseitig.</span>
+              </article>
+              <article class="status-chip status-chip--quiet" [class.status-chip--done]="!!documentReview()">
+                <strong>Firmensignale</strong>
+                <span>Wenn vorhanden, prüfen wir Website, Impressum und ergänzende Unternehmenssignale automatisch mit.</span>
+              </article>
+              <article class="status-chip status-chip--quiet" [class.status-chip--done]="!!verificationLink()">
+                <strong>Freigabe</strong>
+                <span>Schritt 3 wird erst nach bestätigter Identität freigeschaltet.</span>
+              </article>
+            </div>
+
+            <section class="document-review-card" *ngIf="documentReview() as review">
+              <div class="document-review-card__head">
+                <div>
+                  <span class="mini-label">OCR & KI Ergebnis</span>
+                  <h4>Unterlagen wurden sauber ausgewertet</h4>
+                </div>
+                <span class="identity-badge">Verifiziert</span>
+              </div>
+
+              <div class="document-review-grid">
+                <article>
+                  <span>Dokumenttyp</span>
+                  <strong>{{ review.documentType || 'Amtlicher Nachweis' }}</strong>
+                </article>
+                <article>
+                  <span>Firma</span>
+                  <strong>{{ review.tradeName || review.legalEntityName || 'Im Dokument erkannt' }}</strong>
+                </article>
+                <article>
+                  <span>Behörde</span>
+                  <strong>{{ review.issuingAuthority || 'Amtlich bestätigt' }}</strong>
+                </article>
+                <article>
+                  <span>Ort</span>
+                  <strong>{{ review.city || 'Passend zum Standort' }}</strong>
+                </article>
+              </div>
+
+              <div class="document-review-signals">
+                <span class="signal-pill" [class.is-done]="review.officialDocumentVerified">Offizieller Nachweis</span>
+                <span class="signal-pill" [class.is-done]="review.representativeMatch || review.emailMatch">Identität passt</span>
+                <span class="signal-pill" [class.is-done]="review.vatSignalVerified || review.registerSignalVerified">Zweitsignal bestätigt</span>
+              </div>
+            </section>
+
+            <div class="panel-actions panel-actions--between">
+              <button class="secondary-cta secondary-cta--inline" type="button" (click)="goToRegisterStep(1)">
+                <span>Zurück</span>
+              </button>
+              <button class="primary-cta primary-cta--inline" type="button" [disabled]="!verificationLink()" (click)="goToRegisterStep(3)">
+                <span>Weiter zu Schritt 3</span>
+                <span class="cta-arrow">&rarr;</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="workspace-card workspace-panel workspace-panel--credentials" *ngIf="currentRegisterStep() === 3 && verificationLink() as link">
+              <div class="workspace-card__head">
+                <div>
+                  <span class="mini-label">Schritt 3</span>
+                  <h3>Zugang festlegen</h3>
+                  <p>Die Business-Identität ist bestätigt. Jetzt fehlt nur noch dein Passwort.</p>
+                </div>
+              </div>
+
+              <div class="identity-panel">
+                <div>
+                  <span class="mini-label">{{ verificationLabel() }}</span>
+                  <strong>{{ link.googleUserEmail }}</strong>
+                  <p>Diese E-Mail wird als verifizierter Studio-Zugang übernommen.</p>
+                </div>
+                <span class="identity-badge">Bestätigt</span>
+              </div>
+
+              <div class="completion-grid">
+                <article class="completion-card">
+                  <span class="mini-label">Standort</span>
+                  <strong>{{ selectedPlace()?.name }}</strong>
+                  <p>{{ selectedPlace()?.address }}</p>
+                </article>
+                <article class="completion-card">
+                  <span class="mini-label">Freischaltung</span>
+                  <strong>{{ verificationLabel() }}</strong>
+                  <p>Die OCR-/KI-Prüfung hat zusätzliche Unternehmenssignale übernommen und sauber an diesen Standort gebunden.</p>
+                </article>
+                <article class="completion-card">
+                  <span class="mini-label">Setup</span>
+                  <strong>Dokumente übernommen</strong>
+                  <p>Wir übernehmen die geprüften Unternehmenssignale direkt ins Studio-Profil und vervollständigen den Business-Start sauber.</p>
+                </article>
+                <article class="completion-card completion-card--highlight" *ngIf="documentReview() as review">
+                  <span class="mini-label">KI-Review</span>
+                  <strong>{{ review.tradeName || review.legalEntityName || selectedPlace()?.name }}</strong>
+                  <p>{{ review.issuingAuthority || 'Amtlicher Nachweis erkannt' }} · {{ review.city || 'Standort bestätigt' }}</p>
+                </article>
+              </div>
+
+              <div class="verification-status-strip verification-status-strip--step3">
+                <article class="status-chip status-chip--done">
+                  <strong>Business</strong>
+                  <span>Standort und Identität wurden serverseitig bestätigt.</span>
+                </article>
+                <article class="status-chip status-chip--done">
+                  <strong>Review</strong>
+                  <span>OCR, KI und ergänzende Firmensignale wurden ins Profil übernommen.</span>
+                </article>
+                <article class="status-chip status-chip--done">
+                  <strong>Zugang</strong>
+                  <span>Danach ist dein Studio sofort einsatzbereit.</span>
+                </article>
+              </div>
+
+              <form class="register-credentials" [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
+                <label class="auth-field">
+                  <span>Passwort</span>
+                  <div class="input-shell">
+                    <span class="input-icon">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 11V8a5 5 0 0 1 10 0v3" />
+                        <rect x="5" y="11" width="14" height="10" rx="2" />
+                      </svg>
+                    </span>
+                    <input type="password" formControlName="password" placeholder="Mindestens 12 Zeichen, inkl. Zahl und Sonderzeichen" autocomplete="new-password" />
+                  </div>
+                </label>
+
+                <p class="field-hint field-hint--warning" *ngIf="registerPasswordTooShort()">
+                  Dein Passwort braucht mindestens 12 Zeichen.
+                </p>
+
+                <p class="field-hint field-hint--warning" *ngIf="registerPasswordNeedsStrength()">
+                  Nutze Groß- und Kleinbuchstaben, eine Zahl und ein Sonderzeichen.
+                </p>
+
+                <label class="auth-field">
+                  <span>Passwort bestätigen</span>
+                  <div class="input-shell">
+                    <span class="input-icon">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    </span>
+                    <input type="password" formControlName="passwordConfirm" placeholder="Noch einmal eingeben" autocomplete="new-password" />
+                  </div>
+                </label>
+
+                <p class="field-hint field-hint--warning" *ngIf="registerPasswordMismatch()">
+                  Beide Passwort-Felder müssen exakt gleich sein.
+                </p>
+
+                <button class="primary-cta" type="submit" [disabled]="registerBusy() || !canSubmitRegistration()">
+                  <span *ngIf="!registerBusy()">Business-Account anlegen</span>
+                  <span *ngIf="registerBusy()">Business-Account wird vorbereitet...</span>
+                  <span class="cta-arrow">&rarr;</span>
+                </button>
+              </form>
+
+              <div class="panel-actions panel-actions--between">
+                <button class="secondary-cta secondary-cta--inline" type="button" (click)="goToRegisterStep(2)">
+                  <span>Zurück</span>
+                </button>
+              </div>
+          </section>
+
+        <div class="error-banner" [class.error-banner--soft]="googleFallbackSuggested()" *ngIf="activeError()">
+          {{ activeError() }}
+        </div>
+      </main>
+    </div>
+  </section>
+</div>
+
+
+

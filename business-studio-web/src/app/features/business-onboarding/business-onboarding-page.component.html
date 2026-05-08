@@ -1,0 +1,110 @@
+<main class="onboarding-page">
+  <section class="onboarding-shell">
+    <header class="onboarding-header">
+      <div class="brand-lockup">
+        <img class="brand-logo" src="/branding/spargo_complete_logo.png" alt="sparGO" />
+        <div>
+          <span class="eyebrow">Business Onboarding</span>
+          <h1>Studio freischalten</h1>
+        </div>
+      </div>
+
+      <button class="button button--ghost" type="button" (click)="logout()">Abmelden</button>
+    </header>
+
+    <section class="summary-panel">
+      <div>
+        <span class="eyebrow">N&auml;chster Schritt</span>
+        <h2>Best&auml;tigte Business-Identit&auml;t mit deinem Studio verbinden</h2>
+        <p>
+          Wir &uuml;bernehmen den verifizierten Standort, pr&uuml;fen die Business-Mail und &ouml;ffnen danach
+          direkt dein Studio.
+        </p>
+      </div>
+
+      <div class="progress-stack">
+        <span class="progress-chip is-done">Standort verifiziert</span>
+        <span class="progress-chip" [class.is-done]="currentUser()?.emailVerified">
+          <ng-container *ngIf="currentUser()?.emailVerified; else mailPending">E-Mail best&auml;tigt</ng-container>
+          <ng-template #mailPending>E-Mail ausstehend</ng-template>
+        </span>
+        <span class="progress-chip" [class.is-done]="canFinish()">Studio bereit</span>
+      </div>
+    </section>
+
+    <div class="inline-feedback" *ngIf="recovering()">
+      Vorhandene Firebase-Session und verifizierte Standortdaten werden gepr&uuml;ft.
+    </div>
+
+    <section class="content-grid" *ngIf="selectedPlace() as place; else restartRequired">
+      <article class="info-card">
+        <span class="eyebrow">Standort</span>
+        <h3>{{ place.name }}</h3>
+        <p>{{ place.address }}</p>
+      </article>
+
+      <article class="info-card" *ngIf="verificationLink() as link">
+        <span class="eyebrow">Verifizierte Identit&auml;t</span>
+        <h3>{{ link.googleUserEmail }}</h3>
+        <p>{{ link.accountDisplayName || 'Bestaetigter Verifikationspfad' }}</p>
+      </article>
+
+      <article class="action-card">
+        <div class="section-copy">
+          <span class="eyebrow">Freischaltung</span>
+          <h3>E-Mail-Best&auml;tigung</h3>
+          <p>F&uuml;r die finale Studio-Freischaltung muss die Business-Mail best&auml;tigt sein.</p>
+        </div>
+
+        <div class="mail-state">
+          <div>
+            <strong>{{ businessEmail() }}</strong>
+            <p *ngIf="currentUser()?.emailVerified">Die Mail ist best&auml;tigt und bereit f&uuml;r die Freischaltung.</p>
+            <p *ngIf="!currentUser()?.emailVerified">Bitte best&auml;tige zuerst die Mail aus deiner Inbox.</p>
+          </div>
+          <span class="status-badge" [class.pending]="!currentUser()?.emailVerified">
+            <ng-container *ngIf="currentUser()?.emailVerified; else statusPending">Bereit</ng-container>
+            <ng-template #statusPending>Ausstehend</ng-template>
+          </span>
+        </div>
+
+        <div class="button-row">
+          <button class="button button--secondary" type="button" (click)="refreshVerification()">
+            E-Mail-Status aktualisieren
+          </button>
+          <button class="button button--primary" type="button" [disabled]="busy() || !canFinish()" (click)="finishSetup()">
+            <span *ngIf="!busy()">Studio freischalten</span>
+            <span *ngIf="busy()">Studio wird freigeschaltet...</span>
+          </button>
+        </div>
+
+        <div class="inline-feedback error" *ngIf="!canFinish() && completionBlocker()">
+          {{ completionBlocker() }}
+        </div>
+      </article>
+    </section>
+
+    <ng-template #restartRequired>
+      <article class="action-card" *ngIf="!recovering()">
+        <div class="section-copy">
+          <span class="eyebrow">Business-Kontext</span>
+          <h3>Freischaltung wird vorbereitet</h3>
+          <p>
+            Wir gleichen dein Firebase-Konto mit vorhandenen Business- und Verifikationsdaten ab. Wenn du gerade ein
+            neues Business anlegst, führst du den Register-Flow direkt sauber weiter.
+          </p>
+        </div>
+
+        <div class="button-row">
+          <button class="button button--primary" type="button" (click)="continueRegistration()">
+            Business-Registrierung fortsetzen
+          </button>
+        </div>
+      </article>
+    </ng-template>
+
+    <div class="inline-feedback error" *ngIf="error()">
+      {{ error() }}
+    </div>
+  </section>
+</main>

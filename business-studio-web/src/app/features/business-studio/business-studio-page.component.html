@@ -1,0 +1,921 @@
+<div
+  class="bs-page"
+  [class.light]="themeMode() === 'light'"
+  [class.dark]="themeMode() === 'dark'"
+  [class.is-dark]="themeMode() === 'dark'">
+  <section class="bs-shell">
+    <ng-container *ngIf="!loading(); else loadingTemplate">
+      <ng-container *ngIf="business() as business; else errorTemplate">
+        <div class="bs-layout">
+          <aside class="bs-sidebar">
+            <div class="bs-sidebar__brand">
+              <img class="bs-sidebar__logo" src="/branding/spargo_complete_logo.png" alt="sparGO" />
+              <div>
+                <span class="bs-kicker">Business Studio</span>
+                <strong>{{ business.name }}</strong>
+                <small>{{ businessCityLabel() || 'Standort verifiziert' }}</small>
+              </div>
+            </div>
+
+            <article class="bs-business-card">
+              <span class="bs-kicker">Live Business</span>
+              <h2>{{ business.legalEntityName || business.name }}</h2>
+              <p>{{ businessAddressLabel() || businessCityLabel() || 'Standort verifiziert' }}</p>
+              <div class="bs-chip-row">
+                <span class="bs-chip bs-chip--success">{{ verificationTitle() }}</span>
+                <span class="bs-chip">{{ completionRatio() }}% vollständig</span>
+              </div>
+            </article>
+
+            <article class="bs-sidebar__snapshot">
+              <span class="bs-kicker">Heute im Fokus</span>
+              <div class="bs-sidebar__metrics">
+                <div>
+                  <strong>{{ totalActivations() }}</strong>
+                  <small>Aktivierungen</small>
+                </div>
+                <div>
+                  <strong>{{ activeRedemptionCount() }}</strong>
+                  <small>offen</small>
+                </div>
+                <div>
+                  <strong>{{ liveOfferCount() }}</strong>
+                  <small>Gutscheine</small>
+                </div>
+                <div>
+                  <strong>{{ liveStoryCount() }}</strong>
+                  <small>Stories</small>
+                </div>
+              </div>
+            </article>
+
+            <div class="bs-sidebar__actions">
+              <button class="bs-button bs-button--primary" type="button" (click)="startDealCreate(); setSection('offers')">
+                Neuer Gutschein
+              </button>
+              <button class="bs-button bs-button--secondary" type="button" (click)="startStoryCreate(); setSection('stories')">
+                Neue Story
+              </button>
+              <button class="bs-button bs-button--secondary" type="button" (click)="startProfileEdit(); setSection('profile')">
+                Profil bearbeiten
+              </button>
+            </div>
+          </aside>
+
+          <main class="bs-main">
+            <header class="bs-topbar">
+              <nav class="bs-topnav" aria-label="Studio Bereiche">
+                <button
+                  *ngFor="let item of navItems()"
+                  type="button"
+                  class="bs-topnav__item"
+                  [class.is-active]="activeSection() === item.section"
+                  (click)="setSection(item.section)">
+                  {{ item.title }}
+                </button>
+              </nav>
+
+              <div class="bs-toolbar">
+                <label class="bs-search">
+                  <ion-icon class="bs-search__icon" [icon]="searchIcon" aria-hidden="true"></ion-icon>
+                  <input
+                    type="text"
+                    [value]="dashboardSearch()"
+                    (input)="updateDashboardSearch($any($event.target).value)"
+                    placeholder="Suche nach Gutschein, Story, Code oder Signal" />
+                </label>
+                <button class="bs-icon-button" type="button" (click)="setSection('settings')" aria-label="Einstellungen">
+                  <ion-icon [icon]="settingsIcon" aria-hidden="true"></ion-icon>
+                </button>
+                <button class="bs-icon-button bs-icon-button--profile" type="button" (click)="setSection('profile')" aria-label="Profil">
+                  <ion-icon [icon]="profileIcon" aria-hidden="true"></ion-icon>
+                </button>
+                <button class="bs-button bs-button--secondary" type="button" (click)="logout()">Abmelden</button>
+              </div>
+            </header>
+
+            <ng-container [ngSwitch]="activeSection()">
+              <section *ngSwitchCase="'overview'" class="bs-screen" id="studio-overview">
+                <div class="bs-overview-grid">
+                  <article class="bs-dashboard-card">
+                    <div class="bs-dashboard-card__copy">
+                      <span class="bs-kicker">Daten basieren auf deinem Live-Business</span>
+                      <h1>{{ activeSectionTitle() }}</h1>
+                      <p>
+                        Gutscheine, Stories, Einlösungen, KI-Signale und Business-Zuordnung laufen hier in einem
+                        einzigen klaren Studio-Flow zusammen.
+                      </p>
+                      <div class="bs-chip-row">
+                        <span class="bs-chip">{{ liveOfferCount() }} Gutscheine live</span>
+                        <span class="bs-chip">{{ liveStoryCount() }} Stories aktiv</span>
+                        <span class="bs-chip">{{ activeRedemptionCount() }} offene Einlösungen</span>
+                        <span class="bs-chip" *ngIf="pendingManualReviewCount()">{{ pendingManualReviewCount() }} Reviews offen</span>
+                      </div>
+                    </div>
+
+                    <div class="bs-dashboard-stack">
+                      <article class="bs-health-card">
+                        <div>
+                          <span class="bs-kicker">Studio Health</span>
+                          <strong>{{ studioHealthScore() }} Punkte</strong>
+                          <p>{{ completionRatio() }}% Profilvollständigkeit</p>
+                        </div>
+                        <div class="bs-donut" [style.background]="studioHealthConic()">
+                          <span>{{ studioHealthScore() }}</span>
+                        </div>
+                        <div class="bs-health-card__meta">
+                          <span>{{ liveOfferCount() }} Gutscheine</span>
+                          <span>{{ liveStoryCount() }} Stories</span>
+                          <span>{{ activeRedemptionCount() }} offen</span>
+                        </div>
+                      </article>
+
+                      <article class="bs-chart-card">
+                        <div class="bs-chart-card__head">
+                          <div>
+                            <span class="bs-kicker">Account Insight</span>
+                            <strong>{{ totalActivations() }} Aktivierungen</strong>
+                          </div>
+                          <div class="bs-chip-row">
+                            <span class="bs-chip">{{ activationRate() }}% Aktivierung</span>
+                            <span class="bs-chip">{{ redemptionRate() }}% Redemption</span>
+                          </div>
+                        </div>
+                        <p>
+                          Aus {{ liveOfferCount() }} aktiven Gutscheinen, {{ liveStoryCount() }} Stories und
+                          {{ activeRedemptionCount() }} offenen Einlösungen.
+                        </p>
+                        <div class="bs-bar-chart" aria-label="Studio Performance">
+                          <div class="bs-bar" *ngFor="let bar of analyticsBars()" [style.height.%]="bar.height">
+                            <span>{{ bar.value }}</span>
+                            <small>{{ bar.label }}</small>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+                  </article>
+
+                  <aside class="bs-assistant-card bs-assistant-card--overview">
+                    <span class="bs-kicker">Studio Assistent</span>
+                    <h2>{{ pendingManualReviewCount() ? 'Offene Reviews zuerst sichern' : activeSectionTitle() }}</h2>
+                    <p>
+                      {{
+                        pendingManualReviewCount()
+                          ? pendingManualReviewCount() + ' Fälle warten auf manuelle Prüfung.'
+                          : activeSectionDescription()
+                      }}
+                    </p>
+                    <div class="bs-ai-stack" *ngIf="aiStudioSuggestions().length">
+                      <button
+                        class="bs-ai-card"
+                        type="button"
+                        *ngFor="let suggestion of aiStudioSuggestions()"
+                        [class.is-critical]="suggestion.tone === 'critical'"
+                        (click)="runAiSuggestion(suggestion)">
+                        <span>{{ suggestion.title }}</span>
+                        <small>{{ suggestion.detail }}</small>
+                        <strong>{{ suggestion.actionLabel }}</strong>
+                      </button>
+                    </div>
+                    <div class="bs-panel-actions">
+                      <button class="bs-button bs-button--primary" type="button" (click)="pendingManualReviewCount() ? setSection('ops') : openPrimaryAction()">
+                        {{ pendingManualReviewCount() ? 'Zu Ops & Review' : primaryActionLabel() }}
+                      </button>
+                      <button class="bs-button bs-button--secondary" type="button" (click)="setSection('documents')">
+                        Dokumente prüfen
+                      </button>
+                    </div>
+                  </aside>
+                </div>
+
+                <section class="bs-metrics-row">
+                  <article class="bs-metric-card">
+                    <span class="bs-kicker">Reichweite</span>
+                    <strong>{{ totalReach() }}</strong>
+                    <p>{{ totalViews() }} Ansichten gesamt</p>
+                  </article>
+                  <article class="bs-metric-card">
+                    <span class="bs-kicker">Saves</span>
+                    <strong>{{ totalSaves() }}</strong>
+                    <p>{{ liveOfferCount() }} Gutscheine im Feed</p>
+                  </article>
+                  <article class="bs-metric-card">
+                    <span class="bs-kicker">Aktivierungen</span>
+                    <strong>{{ totalActivations() }}</strong>
+                    <p>{{ activeRedemptionCount() }} Pässe offen</p>
+                  </article>
+                  <article class="bs-metric-card">
+                    <span class="bs-kicker">Einlösungen</span>
+                    <strong>{{ totalRedemptions() }}</strong>
+                    <p>{{ redeemedRedemptionCount() }} bestätigt</p>
+                  </article>
+                </section>
+
+                <section class="bs-assistant-strip">
+                  <div class="bs-assistant-strip__intro">
+                    <span class="bs-kicker">Studio Assistent</span>
+                    <strong>{{ pendingManualReviewCount() ? 'Offene Reviews zuerst sichern' : 'Nächste beste Aktion' }}</strong>
+                    <p>
+                      {{
+                        pendingManualReviewCount()
+                          ? pendingManualReviewCount() + ' Fälle warten auf manuelle Prüfung.'
+                          : activeSectionDescription()
+                      }}
+                    </p>
+                  </div>
+                  <div class="bs-assistant-strip__actions">
+                    <button
+                      class="bs-ai-pill"
+                      type="button"
+                      *ngFor="let suggestion of aiStudioSuggestions().slice(0, 3)"
+                      [class.is-critical]="suggestion.tone === 'critical'"
+                      (click)="runAiSuggestion(suggestion)">
+                      <span>{{ suggestion.title }}</span>
+                      <strong>{{ suggestion.actionLabel }}</strong>
+                    </button>
+                    <button class="bs-button bs-button--primary" type="button" (click)="pendingManualReviewCount() ? setSection('ops') : openPrimaryAction()">
+                      {{ pendingManualReviewCount() ? 'Zu Ops & Review' : primaryActionLabel() }}
+                    </button>
+                  </div>
+                </section>
+
+                <section class="bs-workspace-columns">
+                  <div class="bs-column-main">
+                    <article class="bs-panel">
+                      <div class="bs-panel__head">
+                        <div>
+                          <span class="bs-kicker">Schnellzugriff</span>
+                          <h2>Arbeitsbereiche</h2>
+                          <p class="bs-panel__copy">Die wichtigsten Studio-Bereiche direkt erreichbar und sinnvoll sortiert.</p>
+                        </div>
+                      </div>
+
+                      <div class="bs-launch-grid">
+                        <button class="bs-launch-card" type="button" (click)="setSection('offers')">
+                          <span class="bs-kicker">Gutscheine</span>
+                          <strong>{{ liveOfferCount() }}</strong>
+                          <p>{{ filteredDeals()[0]?.title || 'Neue Aktion vorbereiten' }}</p>
+                        </button>
+                        <button class="bs-launch-card" type="button" (click)="setSection('stories')">
+                          <span class="bs-kicker">Stories</span>
+                          <strong>{{ liveStoryCount() }}</strong>
+                          <p>{{ filteredStories()[0]?.label || 'Neue Story veröffentlichen' }}</p>
+                        </button>
+                        <button class="bs-launch-card" type="button" (click)="setSection('redemptions')">
+                          <span class="bs-kicker">Einlösungen</span>
+                          <strong>{{ activeRedemptionCount() }}</strong>
+                          <p>{{ filteredRedemptions()[0]?.dealTitle || 'Aktive Einlösungen prüfen' }}</p>
+                        </button>
+                        <button class="bs-launch-card" type="button" (click)="setSection('ops')">
+                          <span class="bs-kicker">Ops & Review</span>
+                          <strong>{{ pendingManualReviewCount() }}</strong>
+                          <p>{{ manualReviews()[0]?.summary || 'Keine offene manuelle Prüfung' }}</p>
+                        </button>
+                      </div>
+                    </article>
+
+                    <article class="bs-panel">
+                      <div class="bs-panel__head">
+                        <div>
+                          <span class="bs-kicker">Live im Feed</span>
+                          <h2>Aktive Gutscheine</h2>
+                        </div>
+                        <button class="bs-button bs-button--secondary" type="button" (click)="setSection('offers')">Alle öffnen</button>
+                      </div>
+                      <div class="bs-list">
+                        <article class="bs-list-row" *ngFor="let deal of filteredDeals().slice(0, 3)">
+                          <div>
+                            <div class="bs-list-row__title">
+                              <strong>{{ deal.title }}</strong>
+                              <span class="bs-chip">{{ deal.statusLabel }}</span>
+                            </div>
+                            <p>{{ deal.subtitle }}</p>
+                          </div>
+                          <div class="bs-list-row__meta">
+                            <span class="bs-chip">{{ deal.savingsLabel }}</span>
+                            <span class="bs-chip">{{ deal.activations }} Aktivierungen</span>
+                          </div>
+                        </article>
+                      </div>
+                    </article>
+                  </div>
+
+                  <div class="bs-column-side">
+                    <article class="bs-panel" id="studio-documents">
+                      <div class="bs-panel__head">
+                        <div>
+                          <span class="bs-kicker">Dokumente & KI</span>
+                          <h2>Übernommene Signale</h2>
+                        </div>
+                        <button class="bs-button bs-button--secondary" type="button" (click)="setSection('documents')">
+                          Details öffnen
+                        </button>
+                      </div>
+
+                      <div class="bs-signal-list">
+                        <article class="bs-signal-item" *ngFor="let item of completionItems()">
+                          <span class="bs-signal-item__bullet" [class.is-done]="item.done"></span>
+                          <div>
+                            <strong>{{ item.label }}</strong>
+                            <p>{{ item.done ? 'Übernommen und bestätigt' : 'Fehlt noch oder braucht Ergänzung' }}</p>
+                          </div>
+                        </article>
+                      </div>
+                    </article>
+
+                    <article class="bs-panel" id="studio-profile">
+                      <div class="bs-panel__head">
+                        <div>
+                          <span class="bs-kicker">Business</span>
+                          <h2>Profil-Signale</h2>
+                        </div>
+                        <button class="bs-button bs-button--secondary" type="button" (click)="startProfileEdit()">
+                          Profil bearbeiten
+                        </button>
+                      </div>
+                      <div class="bs-chip-row">
+                        <span class="bs-chip">{{ business.contactEmail || 'Keine Kontakt-E-Mail' }}</span>
+                        <span class="bs-chip">{{ business.website || 'Keine Website' }}</span>
+                        <span class="bs-chip">{{ businessCityLabel() || 'Standort verifiziert' }}</span>
+                      </div>
+                    </article>
+                  </div>
+                </section>
+              </section>
+
+              <section *ngSwitchCase="'analytics'" class="bs-screen" id="studio-analytics">
+                <div class="bs-two-column">
+                  <article class="bs-panel">
+                    <div class="bs-panel__head">
+                      <div>
+                        <span class="bs-kicker">Performance</span>
+                        <h2>Aktivierungsqualität</h2>
+                      </div>
+                      <strong class="bs-stat-pill">{{ activationRate() }}%</strong>
+                    </div>
+                    <div class="bs-progress"><span [style.width.%]="activationRate()"></span></div>
+                    <p class="bs-panel__copy">{{ totalActivations() }} Aktivierungen aus {{ totalViews() }} Ansichten.</p>
+                  </article>
+
+                  <article class="bs-panel">
+                    <div class="bs-panel__head">
+                      <div>
+                        <span class="bs-kicker">Einlösung</span>
+                        <h2>Redemption-Rate</h2>
+                      </div>
+                      <strong class="bs-stat-pill">{{ redemptionRate() }}%</strong>
+                    </div>
+                    <div class="bs-progress"><span [style.width.%]="redemptionRate()"></span></div>
+                    <p class="bs-panel__copy">{{ totalRedemptions() }} bestätigte Einlösungen bei {{ totalActivations() }} Aktivierungen.</p>
+                  </article>
+                </div>
+
+                <section class="bs-metrics-row">
+                  <article class="bs-metric-card" *ngFor="let signal of topSignals()">
+                    <span class="bs-kicker">{{ signal.label }}</span>
+                    <strong>{{ signal.value }}</strong>
+                    <p>{{ signal.detail }}</p>
+                  </article>
+                </section>
+              </section>
+
+              <section *ngSwitchCase="'offers'" class="bs-screen" id="studio-offers">
+                <article class="bs-panel">
+                  <div class="bs-panel__head">
+                    <div>
+                      <span class="bs-kicker">Gutscheine</span>
+                      <h2>Gutschein-Studio</h2>
+                      <p class="bs-panel__copy">Aktionen planen, pausieren, archivieren und direkt auf Feed-Niveau steuern.</p>
+                    </div>
+                    <div class="bs-panel-actions">
+                      <button class="bs-filter" type="button" (click)="setOfferFilter('all')">Alle</button>
+                      <button class="bs-filter" type="button" (click)="setOfferFilter('live')">Live</button>
+                      <button class="bs-filter" type="button" (click)="setOfferFilter('paused')">Pausiert</button>
+                      <button class="bs-filter" type="button" (click)="setOfferFilter('archived')">Archiv</button>
+                      <button class="bs-button bs-button--primary" type="button" (click)="startDealCreate()">Neuer Gutschein</button>
+                    </div>
+                  </div>
+
+                  <div class="bs-empty" *ngIf="!filteredDeals().length">Für diesen Status oder diese Suche ist gerade kein Gutschein sichtbar.</div>
+
+                  <div class="bs-list" *ngIf="filteredDeals().length">
+                    <article class="bs-list-row bs-list-row--editor" *ngFor="let deal of filteredDeals()">
+                      <div>
+                        <div class="bs-list-row__title">
+                          <strong>{{ deal.title }}</strong>
+                          <span class="bs-chip">{{ deal.statusLabel }}</span>
+                        </div>
+                        <p>{{ deal.subtitle }}</p>
+                        <div class="bs-chip-row">
+                          <span class="bs-chip">{{ deal.savingsLabel }}</span>
+                          <span class="bs-chip">{{ deal.views }} Aufrufe</span>
+                          <span class="bs-chip">{{ deal.activations }} Aktivierungen</span>
+                        </div>
+                      </div>
+                      <div class="bs-inline-actions">
+                        <button class="bs-button bs-button--secondary" type="button" (click)="startDealEdit(deal)">Bearbeiten</button>
+                        <button class="bs-button bs-button--secondary" type="button" *ngIf="deal.rawStatus !== 'live'" (click)="setDealLifecycle(deal, 'live')">Live</button>
+                        <button class="bs-button bs-button--secondary" type="button" *ngIf="deal.rawStatus === 'live'" (click)="setDealLifecycle(deal, 'paused')">Pause</button>
+                        <button class="bs-button bs-button--secondary" type="button" *ngIf="deal.rawStatus !== 'archived'" (click)="setDealLifecycle(deal, 'archived')">Archiv</button>
+                        <button class="bs-button bs-button--danger" type="button" (click)="deleteDeal(deal)">Löschen</button>
+                      </div>
+                    </article>
+                  </div>
+                </article>
+              </section>
+
+              <section *ngSwitchCase="'stories'" class="bs-screen" id="studio-stories">
+                <article class="bs-panel">
+                  <div class="bs-panel__head">
+                    <div>
+                      <span class="bs-kicker">Stories</span>
+                      <h2>Story-Studio</h2>
+                      <p class="bs-panel__copy">Kurze Live-Impulse, Vorschau und CTA in einem ruhigen Editor.</p>
+                    </div>
+                    <button class="bs-button bs-button--primary" type="button" (click)="startStoryCreate()">Neue Story</button>
+                  </div>
+
+                  <div class="bs-empty" *ngIf="!filteredStories().length">Für diese Suche ist gerade keine Story sichtbar.</div>
+
+                  <div class="bs-list" *ngIf="filteredStories().length">
+                    <article class="bs-list-row bs-list-row--editor" *ngFor="let story of filteredStories()">
+                      <div>
+                        <div class="bs-list-row__title">
+                          <strong>{{ story.label }}</strong>
+                          <span class="bs-chip">{{ story.statusLabel }}</span>
+                        </div>
+                        <p>{{ story.subtitle }}</p>
+                        <div class="bs-chip-row">
+                          <span class="bs-chip">{{ story.itemCount }} Slides</span>
+                          <span class="bs-chip">{{ story.ctaLabel }}</span>
+                        </div>
+                      </div>
+                      <div class="bs-inline-actions">
+                        <button class="bs-button bs-button--secondary" type="button" (click)="startStoryEdit(story)">Bearbeiten</button>
+                        <button class="bs-button bs-button--secondary" type="button" (click)="setSection('offers')">Mit Gutschein koppeln</button>
+                        <button class="bs-button bs-button--danger" type="button" (click)="deleteStory(story)">Löschen</button>
+                      </div>
+                    </article>
+                  </div>
+                </article>
+              </section>
+
+              <section *ngSwitchCase="'redemptions'" class="bs-screen" id="studio-redemptions">
+                <article class="bs-panel">
+                  <div class="bs-panel__head">
+                    <div>
+                      <span class="bs-kicker">Einlösungen</span>
+                      <h2>Redemption Desk</h2>
+                      <p class="bs-panel__copy">Offen, eingelöst oder abgelaufen. Direkt für Team und Kasse gebaut.</p>
+                    </div>
+                    <div class="bs-panel-actions">
+                      <button class="bs-filter" type="button" (click)="setRedemptionFilter('all')">Alle</button>
+                      <button class="bs-filter" type="button" (click)="setRedemptionFilter('active')">Offen</button>
+                      <button class="bs-filter" type="button" (click)="setRedemptionFilter('redeemed')">Eingelöst</button>
+                      <button class="bs-filter" type="button" (click)="setRedemptionFilter('expired')">Abgelaufen</button>
+                      <button class="bs-filter" type="button" (click)="setRedemptionMode('desk')">Kasse</button>
+                      <button class="bs-filter" type="button" (click)="setRedemptionMode('team')">Team</button>
+                    </div>
+                  </div>
+
+                  <div class="bs-empty" *ngIf="!filteredRedemptions().length">Für diesen Status oder diese Suche ist gerade keine Einlösung sichtbar.</div>
+
+                  <div class="bs-redemption-desk" *ngIf="filteredRedemptions().length">
+                    <article class="bs-redemption-row" *ngFor="let redemption of filteredRedemptions()">
+                      <div class="bs-redemption-row__head">
+                        <div>
+                          <strong>{{ redemption.dealTitle }}</strong>
+                          <p>{{ redemption.couponId }} · {{ redemption.code }}</p>
+                        </div>
+                        <span class="bs-chip">{{ redemption.statusLabel }}</span>
+                      </div>
+                      <div class="bs-chip-row">
+                        <span class="bs-chip">Aktiviert: {{ redemption.activatedLabel }}</span>
+                        <span class="bs-chip">Gültig bis: {{ redemption.expiresLabel }}</span>
+                        <span class="bs-chip" *ngIf="redemptionMode() === 'team'">Team-Modus aktiv</span>
+                      </div>
+                      <div class="bs-redemption-row__actions">
+                        <button
+                          class="bs-button bs-button--primary"
+                          type="button"
+                          [disabled]="redemption.statusLabel !== 'Aktiv'"
+                          (click)="markRedemptionRedeemed(redemption)">
+                          {{ redemption.statusLabel !== 'Aktiv' ? 'Bereits eingelöst' : 'Als eingelöst markieren' }}
+                        </button>
+                      </div>
+                    </article>
+                  </div>
+                </article>
+              </section>
+
+              <section *ngSwitchCase="'documents'" class="bs-screen" id="studio-documents">
+                <article class="bs-panel">
+                  <div class="bs-panel__head">
+                    <div>
+                      <span class="bs-kicker">Dokumente</span>
+                      <h2>Dokumente und KI-Review</h2>
+                      <p class="bs-panel__copy">Business-Zuordnung, Standortsignale und Nachweise transparent an einem Ort.</p>
+                    </div>
+                  </div>
+
+                  <ng-container *ngIf="resolvedReview() as review; else missingReview">
+                    <div class="bs-review-grid">
+                      <article class="bs-review-card">
+                        <span class="bs-kicker">{{ isDocumentVerificationReview() ? 'Dokumenttyp' : 'Verifikationsart' }}</span>
+                        <strong>{{ review.documentType || 'Amtlicher Nachweis' }}</strong>
+                      </article>
+                      <article class="bs-review-card">
+                        <span class="bs-kicker">Firma</span>
+                        <strong>{{ review.tradeName || review.legalEntityName || business.name }}</strong>
+                      </article>
+                      <article class="bs-review-card">
+                        <span class="bs-kicker">{{ isDocumentVerificationReview() ? 'Prüfstelle' : 'Quelle' }}</span>
+                        <strong>{{ review.issuingAuthority || verificationSourceLabel() }}</strong>
+                      </article>
+                      <article class="bs-review-card">
+                        <span class="bs-kicker">Verifizierter Standort</span>
+                        <strong>{{ businessAddressLabel() || review.city || businessCityLabel() || 'Passend zum Standort' }}</strong>
+                      </article>
+                    </div>
+                    <div class="bs-chip-row">
+                      <span class="bs-chip" [class.bs-chip--success]="review.officialDocumentVerified || !isDocumentVerificationReview()">
+                        {{ isDocumentVerificationReview() ? 'Offizieller Nachweis' : 'Standort bestätigt' }}
+                      </span>
+                      <span class="bs-chip" [class.bs-chip--success]="review.representativeMatch || review.emailMatch">Identität passt</span>
+                      <span class="bs-chip" [class.bs-chip--success]="review.vatSignalVerified || review.registerSignalVerified">
+                        {{ isDocumentVerificationReview() ? 'Zweitsignal bestätigt' : 'Business-Zuordnung bestätigt' }}
+                      </span>
+                    </div>
+                  </ng-container>
+
+                  <ng-template #missingReview>
+                    <div class="bs-empty">Sobald eine Dokumentenprüfung oder eine verifizierte Zuordnung vorliegt, erscheint sie hier zentral im Studio.</div>
+                  </ng-template>
+                </article>
+              </section>
+
+              <section *ngSwitchCase="'ops'" class="bs-screen" id="studio-ops">
+                <article class="bs-panel">
+                  <div class="bs-panel__head">
+                    <div>
+                      <span class="bs-kicker">Ops & Review</span>
+                      <h2>Manuelle Prüfungen</h2>
+                      <p class="bs-panel__copy">Grenzfälle, manuelle Freigaben und fehlende Signale als saubere Arbeitsfläche für Operations.</p>
+                    </div>
+                    <span class="bs-stat-pill">{{ pendingManualReviewCount() }} offen</span>
+                  </div>
+
+                  <div class="bs-empty" *ngIf="!manualReviews().length">Aktuell gibt es keine offene manuelle Prüfung.</div>
+
+                  <div class="bs-list" *ngIf="manualReviews().length">
+                    <article class="bs-list-row bs-list-row--review" *ngFor="let review of manualReviews()">
+                      <div class="bs-review-stack">
+                        <div class="bs-list-row__title">
+                          <strong>{{ review.placeName || 'Unbekannter Standort' }}</strong>
+                          <span class="bs-chip">Score {{ review.score }}</span>
+                        </div>
+                        <p>{{ review.summary }}</p>
+                        <div class="bs-review-meta">
+                          <span class="bs-chip">{{ review.fileName || 'Unbekannte Datei' }}</span>
+                          <span class="bs-chip">{{ review.identityEmail || review.claimantName || 'Keine Identität' }}</span>
+                          <span class="bs-chip">{{ review.createdAtLabel || 'Gerade eingegangen' }}</span>
+                        </div>
+                        <div class="bs-chip-row" *ngIf="review.matchedSignals.length">
+                          <span class="bs-chip bs-chip--success" *ngFor="let signal of review.matchedSignals">{{ signal }}</span>
+                        </div>
+                        <div class="bs-chip-row" *ngIf="review.missingSignals.length">
+                          <span class="bs-chip" *ngFor="let signal of review.missingSignals">{{ signal }}</span>
+                        </div>
+                      </div>
+
+                      <div class="bs-review-summary">
+                        <span class="bs-kicker">Extrahiert</span>
+                        <strong>{{ review.extracted.documentType || 'Kein Typ erkannt' }}</strong>
+                        <p>{{ review.extracted.legalEntityName || review.extracted.tradeName || 'Kein Firmenname erkannt' }}</p>
+                        <p>
+                          {{
+                            (review.extracted.street || '')
+                              + (review.extracted.postalCode ? ', ' + review.extracted.postalCode : '')
+                              + (review.extracted.city ? ' ' + review.extracted.city : '')
+                          }}
+                        </p>
+                        <p>{{ review.extracted.issuingAuthority || 'Keine Behörde erkannt' }}</p>
+                      </div>
+                    </article>
+                  </div>
+                </article>
+              </section>
+
+              <section *ngSwitchCase="'profile'" class="bs-screen" id="studio-profile">
+                <article class="bs-panel">
+                  <div class="bs-panel__head">
+                    <div>
+                      <span class="bs-kicker">Business</span>
+                      <h2>Business-Profil</h2>
+                      <p class="bs-panel__copy">Signale, Kontakt, Website und Business-Daten an einer Stelle pflegen.</p>
+                    </div>
+                    <div class="bs-inline-actions">
+                      <button class="bs-button bs-button--secondary" type="button" (click)="applyAiProfileEnhancements()" [disabled]="generatingStudioAi() === 'profile'">
+                        <ion-icon [icon]="sparklesIcon" aria-hidden="true"></ion-icon>
+                        {{ generatingStudioAi() === 'profile' ? 'Gemini arbeitet...' : 'Mit Gemini ergänzen' }}
+                      </button>
+                      <button class="bs-button bs-button--primary" type="button" (click)="startProfileEdit()">Profil bearbeiten</button>
+                    </div>
+                  </div>
+
+                  <div class="bs-profile-grid">
+                    <article class="bs-review-card bs-review-card--accent">
+                      <span class="bs-kicker">Verifizierter Standort</span>
+                      <strong>{{ businessAddressLabel() || 'Keine Straßenadresse im Business-Profil gespeichert' }}</strong>
+                      <p>{{ businessCityLabel() || 'Standortdaten neu synchronisieren' }}</p>
+                    </article>
+                    <article class="bs-review-card">
+                      <span class="bs-kicker">Kontakt</span>
+                      <strong>{{ business.contactEmail || 'Keine Kontakt-E-Mail' }}</strong>
+                      <p>{{ business.phone || 'Keine Telefonnummer hinterlegt' }}</p>
+                    </article>
+                    <article class="bs-review-card">
+                      <span class="bs-kicker">Website</span>
+                      <strong>{{ business.website || 'Keine Website' }}</strong>
+                      <p>{{ business.tagline || 'Keine Tagline hinterlegt' }}</p>
+                    </article>
+                    <article class="bs-review-card">
+                      <span class="bs-kicker">Rechtlicher Name</span>
+                      <strong>{{ business.legalEntityName || 'Noch nicht gesetzt' }}</strong>
+                      <p>{{ business.shortDescription || 'Keine Kurzbeschreibung hinterlegt' }}</p>
+                    </article>
+                  </div>
+
+                  <div class="bs-signal-list">
+                    <article class="bs-signal-item" *ngFor="let item of completionItems()">
+                      <span class="bs-signal-item__bullet" [class.is-done]="item.done"></span>
+                      <div>
+                        <strong>{{ item.label }}</strong>
+                        <p>{{ item.done ? 'Übernommen und bestätigt' : 'Fehlt noch oder braucht Ergänzung' }}</p>
+                      </div>
+                    </article>
+                  </div>
+
+                  <div class="inline-feedback success" *ngIf="success()">{{ success() }}</div>
+                </article>
+              </section>
+
+              <section *ngSwitchCase="'settings'" class="bs-screen" id="studio-settings">
+                <article class="bs-panel">
+                  <div class="bs-panel__head">
+                    <div>
+                      <span class="bs-kicker">Einstellungen</span>
+                      <h2>Studio-Einstellungen</h2>
+                      <p class="bs-panel__copy">Light bleibt Standard. Dark Mode ist nur als umschaltbare Option verfügbar.</p>
+                    </div>
+                  </div>
+
+                  <div class="bs-two-column">
+                    <article class="bs-settings-card">
+                      <span class="bs-kicker">Theme</span>
+                      <strong>Darstellung</strong>
+                      <p>Standard ist Light. Dark Mode lässt sich hier bewusst zuschalten.</p>
+                      <div class="bs-panel-actions">
+                        <button class="bs-button bs-button--secondary" type="button" (click)="setThemeMode('light')">Light</button>
+                        <button class="bs-button bs-button--secondary" type="button" (click)="setThemeMode('dark')">Dark</button>
+                      </div>
+                    </article>
+
+                    <article class="bs-settings-card">
+                      <span class="bs-kicker">Studio</span>
+                      <strong>Business-Zustand</strong>
+                      <p>{{ verificationTitle() }} | {{ completionRatio() }}% vollständig | {{ liveOfferCount() }} Gutscheine live.</p>
+                    </article>                    <article class="bs-settings-card bs-settings-card--danger">
+                      <span class="bs-kicker">Gefahrenzone</span>
+                      <strong>Business und Konto löschen</strong>
+                      <p>
+                        Entfernt Business-Profil, Gutscheine, Stories, Einlösungen, Reviews, Cache-Daten,
+                        Verifikationssitzungen, dein User-Dokument und dein Firebase-Auth-Konto endgültig.
+                      </p>
+                      <label class="bs-field bs-field--full">
+                        <span>Bestätigung</span>
+                        <input
+                          [value]="deleteBusinessConfirmation()"
+                          (input)="updateDeleteBusinessConfirmation($any($event.target).value)"
+                          placeholder="BUSINESS LÖSCHEN" />
+                      </label>
+                      <button
+                        class="bs-button bs-button--danger"
+                        type="button"
+                        [disabled]="deletingBusinessAccount()"
+                        (click)="deleteEntireBusinessAccount()">
+                        {{ deletingBusinessAccount() ? 'Löschung läuft...' : 'Gesamtes Business endgültig löschen' }}
+                      </button>
+                    </article>
+                  </div>
+                </article>
+              </section>
+            </ng-container>
+
+            <div class="inline-feedback error" *ngIf="error()">{{ error() }}</div>
+          </main>
+        </div>
+
+        <div
+          class="bs-composer-backdrop"
+          *ngIf="creatingDeal() || creatingStory() || editingProfile()"
+          (click)="creatingDeal() ? cancelDealCreate() : creatingStory() ? cancelStoryCreate() : cancelProfileEdit()"></div>
+
+        <section
+          class="bs-composer-sheet"
+          *ngIf="creatingDeal() || creatingStory() || editingProfile()"
+          [class.is-open]="creatingDeal() || creatingStory() || editingProfile()">
+          <div class="bs-composer-sheet__handle"></div>
+
+          <div class="bs-composer-card" *ngIf="creatingDeal()">
+            <div class="bs-panel__head">
+              <div>
+                <span class="bs-kicker">{{ editingDealId() ? 'Gutschein bearbeiten' : 'Neue Aktion' }}</span>
+                <h2>{{ editingDealId() ? 'Aktion anpassen' : 'Neuen Gutschein anlegen' }}</h2>
+                <p class="bs-panel__copy">Gemini erstellt den Entwurf aus Business, Standort und vorhandenen Angaben. Du passt nur noch die Details an.</p>
+              </div>
+              <button class="bs-button bs-button--secondary" type="button" (click)="applyAiDealSuggestion()" [disabled]="generatingStudioAi() === 'deal'">
+                <ion-icon [icon]="sparklesIcon" aria-hidden="true"></ion-icon>
+                {{ generatingStudioAi() === 'deal' ? 'Gemini arbeitet...' : 'Mit Gemini füllen' }}
+              </button>
+            </div>
+
+            <div class="bs-builder-grid">
+              <div class="bs-builder-main">
+                <div class="bs-form-grid">
+                  <label class="bs-field bs-field--full">
+                    <span>Titel</span>
+                    <input [value]="dealDraft().title" (input)="updateDealDraft('title', $any($event.target).value)" placeholder="15% auf Beratung" />
+                  </label>
+                  <label class="bs-field">
+                    <span>Kurzzeile</span>
+                    <input [value]="dealDraft().subtitle" (input)="updateDealDraft('subtitle', $any($event.target).value)" placeholder="Persönlicher Termin im Studio" />
+                  </label>
+                  <label class="bs-field">
+                    <span>Verfügbarkeit</span>
+                    <input [value]="dealDraft().availabilityLabel" (input)="updateDealDraft('availabilityLabel', $any($event.target).value)" placeholder="Diese Woche" />
+                  </label>
+                  <label class="bs-field bs-field--full">
+                    <span>Beschreibung</span>
+                    <textarea rows="5" [value]="dealDraft().description" (input)="updateDealDraft('description', $any($event.target).value)" placeholder="Was ist der Vorteil und wie wird er eingelöst?"></textarea>
+                  </label>
+                  <label class="bs-field">
+                    <span>Vorteil in %</span>
+                    <input type="number" min="0" max="35" [value]="dealDraft().savingsPercent" (input)="updateDealDraft('savingsPercent', +$any($event.target).value)" />
+                  </label>
+                  <label class="bs-field">
+                    <span>Laufzeit in Tagen</span>
+                    <input type="number" min="1" max="90" [value]="dealDraft().validityDays" (input)="updateDealDraft('validityDays', +$any($event.target).value)" />
+                  </label>
+                  <label class="bs-field">
+                    <span>Bild-URL</span>
+                    <input [value]="dealDraft().imageUrl" (input)="updateDealDraft('imageUrl', $any($event.target).value)" placeholder="https://..." />
+                  </label>
+                </div>
+              </div>
+
+              <aside class="bs-builder-preview">
+                <span class="bs-kicker">Live Preview</span>
+                <strong>{{ dealDraft().title || 'Gutschein-Titel' }}</strong>
+                <p>{{ dealDraft().subtitle || 'Kurze lokale Nutzenzeile' }}</p>
+                <div class="bs-chip-row">
+                  <span class="bs-chip">{{ dealDraft().savingsPercent || 0 }}% Vorteil</span>
+                  <span class="bs-chip">{{ dealDraft().availabilityLabel || 'Aktiv' }}</span>
+                  <span class="bs-chip">{{ dealDraft().validityDays || 7 }} Tage</span>
+                </div>
+                <small>{{ dealDraft().description || 'Gemini kann hier einen klaren Einlöse-Text vorbereiten.' }}</small>
+              </aside>
+            </div>
+
+            <div class="bs-panel-actions bs-panel-actions--footer">
+              <button class="bs-button bs-button--secondary" type="button" (click)="cancelDealCreate()">Abbrechen</button>
+              <button class="bs-button bs-button--primary" type="button" (click)="saveDeal()">
+                {{ savingDeal() ? 'Speichert...' : (editingDealId() ? 'Gutschein aktualisieren' : 'Gutschein speichern') }}
+              </button>
+            </div>
+          </div>
+
+          <div class="bs-composer-card" *ngIf="creatingStory()">
+            <div class="bs-panel__head">
+              <div>
+                <span class="bs-kicker">{{ editingStoryId() ? 'Story bearbeiten' : 'Neue Story' }}</span>
+                <h2>{{ editingStoryId() ? 'Story anpassen' : 'Neue Story vorbereiten' }}</h2>
+                <p class="bs-panel__copy">Gemini formuliert eine kurze lokale Story, die sich direkt wie Feed-Content anfühlt.</p>
+              </div>
+              <button class="bs-button bs-button--secondary" type="button" (click)="applyAiStorySuggestion()" [disabled]="generatingStudioAi() === 'story'">
+                <ion-icon [icon]="sparklesIcon" aria-hidden="true"></ion-icon>
+                {{ generatingStudioAi() === 'story' ? 'Gemini arbeitet...' : 'Mit Gemini füllen' }}
+              </button>
+            </div>
+
+            <div class="bs-form-grid">
+              <label class="bs-field">
+                <span>Label</span>
+                <input [value]="storyDraft().label" (input)="updateStoryDraft('label', $any($event.target).value)" placeholder="Neue Kollektion eingetroffen" />
+              </label>
+              <label class="bs-field">
+                <span>Unterzeile</span>
+                <input [value]="storyDraft().subtitle" (input)="updateStoryDraft('subtitle', $any($event.target).value)" placeholder="Heute im Studio" />
+              </label>
+              <label class="bs-field bs-field--full">
+                <span>Story-Text</span>
+                <textarea rows="3" [value]="storyDraft().body" (input)="updateStoryDraft('body', $any($event.target).value)" placeholder="Was sollen Kund:innen sofort sehen?"></textarea>
+              </label>
+              <label class="bs-field">
+                <span>CTA</span>
+                <input [value]="storyDraft().ctaLabel" (input)="updateStoryDraft('ctaLabel', $any($event.target).value)" placeholder="Mehr sehen" />
+              </label>
+              <label class="bs-field">
+                <span>Automatisch sichtbar</span>
+                <input type="number" min="1" max="24" [value]="storyDraft().durationHours" (input)="updateStoryDraft('durationHours', +$any($event.target).value)" />
+              </label>
+              <label class="bs-field">
+                <span>Bild-URL</span>
+                <input [value]="storyDraft().imageUrl" (input)="updateStoryDraft('imageUrl', $any($event.target).value)" placeholder="https://..." />
+              </label>
+            </div>
+
+            <article class="bs-story-preview">
+              <span class="bs-kicker">Preview</span>
+              <div class="bs-story-preview__media" [class.has-image]="!!storyPreview().imageUrl">
+                <img *ngIf="storyPreview().imageUrl" [src]="storyPreview().imageUrl" alt="" />
+                <span *ngIf="!storyPreview().imageUrl">Story Cover</span>
+              </div>
+              <strong>{{ storyPreview().title }}</strong>
+              <p>{{ storyPreview().subtitle }}</p>
+              <small>{{ storyPreview().body }}</small>
+              <span class="bs-chip">{{ storyPreview().ctaLabel }}</span>
+            </article>
+
+            <div class="bs-panel-actions bs-panel-actions--footer">
+              <button class="bs-button bs-button--secondary" type="button" (click)="cancelStoryCreate()">Abbrechen</button>
+              <button class="bs-button bs-button--primary" type="button" (click)="saveStory()">
+                {{ savingStory() ? 'Speichert...' : (editingStoryId() ? 'Story aktualisieren' : 'Story speichern') }}
+              </button>
+            </div>
+          </div>
+
+          <div class="bs-composer-card" *ngIf="editingProfile()">
+            <div class="bs-panel__head">
+              <div>
+                <span class="bs-kicker">Business-Profil</span>
+                <h2>Profil sauber bearbeiten</h2>
+                <p class="bs-panel__copy">Auch das Profil liegt in einer eigenen Arbeitsfläche und zerreißt nicht mehr das Dashboard.</p>
+              </div>
+              <button class="bs-button bs-button--secondary" type="button" (click)="applyAiProfileEnhancements()" [disabled]="generatingStudioAi() === 'profile'">
+                <ion-icon [icon]="sparklesIcon" aria-hidden="true"></ion-icon>
+                {{ generatingStudioAi() === 'profile' ? 'Gemini arbeitet...' : 'Mit Gemini ergänzen' }}
+              </button>
+            </div>
+
+            <div class="bs-form-grid">
+              <label class="bs-field">
+                <span>Tagline</span>
+                <input [value]="profileDraft().tagline" (input)="updateProfileDraft('tagline', $any($event.target).value)" placeholder="Kurze Botschaft für dein Business" />
+              </label>
+              <label class="bs-field">
+                <span>Website</span>
+                <input [value]="profileDraft().website" (input)="updateProfileDraft('website', $any($event.target).value)" placeholder="https://deinbusiness.de" />
+              </label>
+              <label class="bs-field bs-field--full">
+                <span>Kurzbeschreibung</span>
+                <textarea rows="3" [value]="profileDraft().shortDescription" (input)="updateProfileDraft('shortDescription', $any($event.target).value)" placeholder="Was sollen Kund:innen sofort über dein Business verstehen?"></textarea>
+              </label>
+              <label class="bs-field">
+                <span>Telefon</span>
+                <input [value]="profileDraft().phone" (input)="updateProfileDraft('phone', $any($event.target).value)" placeholder="+49 ..." />
+              </label>
+              <label class="bs-field">
+                <span>Business-E-Mail</span>
+                <input [value]="profileDraft().contactEmail" (input)="updateProfileDraft('contactEmail', $any($event.target).value)" placeholder="kontakt@deinbusiness.de" />
+              </label>
+              <label class="bs-field bs-field--full">
+                <span>Rechtlicher Name</span>
+                <input [value]="profileDraft().legalEntityName" (input)="updateProfileDraft('legalEntityName', $any($event.target).value)" placeholder="Muster GmbH" />
+              </label>
+            </div>
+
+            <div class="bs-panel-actions bs-panel-actions--footer">
+              <button class="bs-button bs-button--secondary" type="button" (click)="cancelProfileEdit()">Abbrechen</button>
+              <button class="bs-button bs-button--primary" type="button" (click)="saveProfile()">
+                {{ savingProfile() ? 'Speichert...' : 'Profil speichern' }}
+              </button>
+            </div>
+          </div>
+        </section>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #loadingTemplate>
+      <section class="bs-loading-shell">
+        <h1>Studio wird geladen...</h1>
+      </section>
+    </ng-template>
+
+    <ng-template #errorTemplate>
+      <div class="inline-feedback error">
+        {{ error() || 'Das Studio konnte nicht geladen werden.' }}
+      </div>
+    </ng-template>
+  </section>
+</div>

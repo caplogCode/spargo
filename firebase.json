@@ -1,0 +1,164 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "functions"
+    }
+  ],
+  "hosting": {
+    "public": "business-studio-web/dist/business-studio-web/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "/index.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/main-*.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/styles-*.css",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/business-register/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/business-onboarding/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/business-studio/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "/api/googleMapsBusinessSearch",
+        "function": "googleMapsBusinessSearch"
+      },
+      {
+        "source": "/api/googleBusinessAccessibleLocations",
+        "function": "googleBusinessAccessibleLocations"
+      },
+      {
+        "source": "/api/googleBusinessVerifyCompanyIdentity",
+        "function": "googleBusinessVerifyCompanyIdentity"
+      },
+      {
+        "source": "/api/verifyBusinessEvidenceDocument",
+        "function": "verifyBusinessEvidenceDocument"
+      },
+      {
+        "source": "/api/recoverBusinessOnboardingContext",
+        "function": "recoverBusinessOnboardingContext"
+      },
+      {
+        "source": "/api/repairBusinessStudioProfile",
+        "function": "repairBusinessStudioProfile"
+      },
+      {
+        "source": "/api/upsertBusinessStudioDeal",
+        "function": "upsertBusinessStudioDeal"
+      },
+      {
+        "source": "/api/deleteBusinessStudioDeal",
+        "function": "deleteBusinessStudioDeal"
+      },
+      {
+        "source": "/api/upsertBusinessStudioStory",
+        "function": "upsertBusinessStudioStory"
+      },
+      {
+        "source": "/api/deleteBusinessStudioStory",
+        "function": "deleteBusinessStudioStory"
+      },
+      {
+        "source": "/api/generateBusinessStudioContent",
+        "function": "generateBusinessStudioContent"
+      },
+      {
+        "source": "/api/deleteOwnedBusinessAccount",
+        "function": "deleteOwnedBusinessAccount"
+      },
+      {
+        "source": "/app",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/app/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/business-register",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/business-register/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/business-onboarding",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/business-onboarding/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/business-studio",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/business-studio/**",
+        "destination": "/index.html"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "storage": {
+    "rules": "storage.rules"
+  }
+}

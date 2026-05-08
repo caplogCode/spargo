@@ -1,0 +1,282 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function userDoc(userId) {
+      return get(/databases/$(database)/documents/users/$(userId));
+    }
+
+    function userExists(userId) {
+      return exists(/databases/$(database)/documents/users/$(userId));
+    }
+
+    function businessDoc(businessId) {
+      return get(/databases/$(database)/documents/businesses/$(businessId));
+    }
+
+    function businessExists(businessId) {
+      return exists(/databases/$(database)/documents/businesses/$(businessId));
+    }
+
+    function publicBusinessExists(businessId) {
+      return exists(/databases/$(database)/documents/publicCouponBusinesses/$(businessId));
+    }
+
+    function anyBusinessExists(businessId) {
+      return businessExists(businessId) || publicBusinessExists(businessId);
+    }
+
+    function isBusinessOwner(businessId) {
+      return signedIn() &&
+          businessExists(businessId) &&
+          businessDoc(businessId).data.ownerId == request.auth.uid;
+    }
+
+    function isAssignedBusinessUser(businessId) {
+      return signedIn() &&
+          businessExists(businessId) &&
+          businessDoc(businessId).data.assignedUserIds is list &&
+          request.auth.uid in businessDoc(businessId).data.assignedUserIds;
+    }
+
+    function isUidScopedBusinessId(businessId) {
+      return signedIn() &&
+          businessId == 'business_' + request.auth.uid;
+    }
+
+    function userOwnsBusinessInProfile(businessId) {
+      return signedIn() &&
+          userExists(request.auth.uid) &&
+          userDoc(request.auth.uid).data.ownedBusinessId == businessId;
+    }
+
+    function isBusinessMember(businessId) {
+      return isUidScopedBusinessId(businessId) ||
+          isBusinessOwner(businessId) ||
+          isAssignedBusinessUser(businessId) ||
+          userOwnsBusinessInProfile(businessId);
+    }
+
+    function authEmailVerified() {
+      return signedIn() && request.auth.token.email_verified == true;
+    }
+
+    function businessVerified(businessId) {
+      return businessExists(businessId) &&
+          businessDoc(businessId).data.verificationStatus == 'verified';
+    }
+
+    function businessVerificationSessionDoc(sessionId) {
+      return get(/databases/$(database)/documents/_businessVerificationSessions/$(sessionId));
+    }
+
+    function businessVerificationSessionExists(sessionId) {
+      return exists(/databases/$(database)/documents/_businessVerificationSessions/$(sessionId));
+    }
+
+    function validVerifiedBusinessCreate() {
+      return authEmailVerified() &&
+          request.auth.token.email is string &&
+          request.resource.data.ownerId == request.auth.uid &&
+          request.resource.data.verificationStatus == 'verified' &&
+          request.resource.data.contactEmail == request.auth.token.email &&
+          request.resource.data.ownershipConfirmed == true &&
+          (request.resource.data.verificationMethod == 'googleBusinessProfile' ||
+              request.resource.data.verificationMethod == 'registryDocumentProof') &&
+          request.resource.data.contactEmail is string &&
+          request.resource.data.contactEmail.size() > 3 &&
+          request.resource.data.website is string &&
+          request.resource.data.website.size() > 3 &&
+          request.resource.data.legalEntityName is string &&
+          request.resource.data.legalEntityName.size() > 1 &&
+          request.resource.data.imprintInfo is string &&
+          request.resource.data.imprintInfo.size() > 5 &&
+          request.resource.data.claimedByName is string &&
+          request.resource.data.claimedByName.size() > 2 &&
+          request.resource.data.claimedByRole is string &&
+          request.resource.data.claimedByRole.size() > 1 &&
+          request.resource.data.verificationPlaceId is string &&
+          request.resource.data.verificationPlaceId.size() > 5 &&
+          request.resource.data.googleProfileLink is map &&
+          request.resource.data.googleProfileLink.verificationSessionId is string &&
+          request.resource.data.googleProfileLink.verificationSessionId.size() > 10 &&
+          request.resource.data.googleProfileLink.placeId is string &&
+          request.resource.data.googleProfileLink.placeId ==
+              request.resource.data.verificationPlaceId &&
+          businessVerificationSessionExists(
+              request.resource.data.googleProfileLink.verificationSessionId) &&
+          businessVerificationSessionDoc(
+              request.resource.data.googleProfileLink.verificationSessionId).data.verified == true &&
+          businessVerificationSessionDoc(
+              request.resource.data.googleProfileLink.verificationSessionId).data.verificationMethod ==
+              request.resource.data.verificationMethod &&
+          (
+            businessVerificationSessionDoc(
+                request.resource.data.googleProfileLink.verificationSessionId).data.googleEmail ==
+                request.auth.token.email ||
+            businessVerificationSessionDoc(
+                request.resource.data.googleProfileLink.verificationSessionId).data.identityEmail ==
+                request.auth.token.email
+          ) &&
+          businessVerificationSessionDoc(
+              request.resource.data.googleProfileLink.verificationSessionId).data.placeId ==
+              request.resource.data.verificationPlaceId &&
+          businessVerificationSessionDoc(
+              request.resource.data.googleProfileLink.verificationSessionId).data.expiresAt is timestamp &&
+          businessVerificationSessionDoc(
+              request.resource.data.googleProfileLink.verificationSessionId).data.expiresAt > request.time;
+    }
+
+    function ownerKeepsAutomaticVerificationState() {
+      return authEmailVerified() &&
+          request.auth.token.email is string &&
+          request.resource.data.ownerId == resource.data.ownerId &&
+          request.resource.data.contactEmail == request.auth.token.email &&
+          request.resource.data.verificationStatus == 'verified' &&
+          request.resource.data.ownershipConfirmed == true;
+    }
+
+    function assignedUserKeepsVerificationState() {
+      return request.resource.data.ownerId == resource.data.ownerId &&
+          request.resource.data.contactEmail == resource.data.contactEmail &&
+          request.resource.data.verificationStatus == resource.data.verificationStatus &&
+          request.resource.data.verificationMethod == resource.data.verificationMethod &&
+          request.resource.data.ownershipConfirmed == resource.data.ownershipConfirmed;
+    }
+
+    function profileOwnerCanRepairVerifiedBusiness(businessId) {
+      return userOwnsBusinessInProfile(businessId) &&
+          request.resource.data.verificationStatus == 'verified' &&
+          request.resource.data.ownershipConfirmed == true &&
+          (
+            request.resource.data.ownerId == resource.data.ownerId ||
+            (
+              (resource.data.ownerId == null || resource.data.ownerId == '') &&
+              request.resource.data.ownerId == request.auth.uid
+            )
+          );
+    }
+
+    match /users/{userId} {
+      allow read, create, update: if isSelf(userId);
+      allow delete: if false;
+    }
+
+    match /_businessVerificationSessions/{sessionId} {
+      allow read, create, update, delete: if false;
+    }
+
+    match /_googleBusinessAccessCache/{cacheId} {
+      allow read, create, update, delete: if false;
+    }
+
+    match /businesses/{businessId} {
+      allow read: if true;
+      allow create: if signedIn() && validVerifiedBusinessCreate();
+      allow update: if (isBusinessOwner(businessId) &&
+              ownerKeepsAutomaticVerificationState()) ||
+          (isAssignedBusinessUser(businessId) &&
+              assignedUserKeepsVerificationState()) ||
+          profileOwnerCanRepairVerifiedBusiness(businessId);
+      allow delete: if false;
+    }
+
+    match /deals/{dealId} {
+      allow read: if true;
+      allow create: if signedIn() &&
+          request.resource.data.ownerId == request.auth.uid &&
+          isBusinessMember(request.resource.data.businessId) &&
+          businessVerified(request.resource.data.businessId);
+      allow update: if isBusinessMember(resource.data.businessId) &&
+          businessVerified(resource.data.businessId);
+      allow delete: if isBusinessMember(resource.data.businessId) &&
+          businessVerified(resource.data.businessId);
+    }
+
+    match /stories/{storyId} {
+      allow read: if true;
+      allow create: if signedIn() &&
+          request.resource.data.ownerId == request.auth.uid &&
+          isBusinessMember(request.resource.data.businessId) &&
+          businessVerified(request.resource.data.businessId);
+      allow update: if isBusinessMember(resource.data.businessId) &&
+          businessVerified(resource.data.businessId);
+      allow delete: if isBusinessMember(resource.data.businessId) &&
+          businessVerified(resource.data.businessId);
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if signedIn() &&
+          resource.data.userId == request.auth.uid &&
+          request.resource.data.userId == resource.data.userId;
+      allow delete: if false;
+    }
+
+    match /redemptions/{redemptionId} {
+      allow read: if signedIn() &&
+          (resource.data.userId == request.auth.uid ||
+              isBusinessMember(resource.data.businessId));
+      allow create: if signedIn() &&
+          request.resource.data.userId == request.auth.uid &&
+          anyBusinessExists(request.resource.data.businessId);
+      allow update: if signedIn() &&
+          request.resource.data.userId == resource.data.userId &&
+          request.resource.data.businessId == resource.data.businessId &&
+          (resource.data.userId == request.auth.uid ||
+              isBusinessMember(resource.data.businessId));
+      allow delete: if false;
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.authorId == request.auth.uid;
+      allow update: if signedIn() &&
+          resource.data.authorId == request.auth.uid &&
+          request.resource.data.authorId == resource.data.authorId;
+      allow delete: if signedIn() &&
+          resource.data.authorId == request.auth.uid &&
+          resource.data.createdAt is timestamp &&
+          request.time < resource.data.createdAt + duration.value(7, 'd');
+    }
+
+    match /publicCouponBusinesses/{businessId} {
+      allow read: if true;
+      allow create, update: if false;
+      allow delete: if false;
+    }
+
+    match /publicCouponDeals/{dealId} {
+      allow read: if true;
+      allow create, update: if false;
+      allow delete: if false;
+    }
+
+    match /publicCouponScanJobs/{jobId} {
+      allow read: if signedIn() &&
+          (!exists(/databases/$(database)/documents/publicCouponScanJobs/$(jobId)) ||
+              resource.data.userId == request.auth.uid);
+      allow create, update: if signedIn() &&
+          request.resource.data.userId == request.auth.uid &&
+          request.resource.data.requestKey is string &&
+          request.resource.data.requestKey.size() > 3 &&
+          request.resource.data.status is string &&
+          request.resource.data.city is string &&
+          request.resource.data.city.size() > 1 &&
+          request.resource.data.district is string &&
+          request.resource.data.latitude is number &&
+          request.resource.data.longitude is number &&
+          request.resource.data.radiusKm is number;
+      allow delete: if false;
+    }
+
+  }
+}

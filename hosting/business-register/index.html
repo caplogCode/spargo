@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>sparGO Business Studio</title>
+    <meta
+      name="description"
+      content="Business Studio Login fuer sparGO. Direkt einloggen und das Studio oeffnen."
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f5f9;
+        --panel: #ffffff;
+        --panel-soft: #f8f8fc;
+        --text: #241b20;
+        --muted: #70656d;
+        --line: #e6e3ea;
+        --accent: #db2149;
+        --accent-dark: #23181c;
+        --accent-soft: #fff0f4;
+        --shadow: 0 24px 80px rgba(34, 24, 29, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        font-family: Inter, Arial, Helvetica, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(219, 33, 73, 0.08), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(46, 77, 140, 0.08), transparent 24%),
+          var(--bg);
+        color: var(--text);
+      }
+
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+
+      .shell {
+        width: min(1180px, 100%);
+        display: grid;
+        grid-template-columns: minmax(280px, 0.92fr) minmax(320px, 1.08fr);
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .hero,
+      .card {
+        border-radius: 32px;
+        overflow: hidden;
+        min-height: 720px;
+        box-shadow: var(--shadow);
+      }
+
+      .hero {
+        position: relative;
+        padding: 36px;
+        background:
+          radial-gradient(circle at 20% 80%, rgba(219, 33, 73, 0.18), transparent 30%),
+          radial-gradient(circle at 78% 26%, rgba(255, 255, 255, 0.08), transparent 24%),
+          linear-gradient(180deg, #1d2331 0%, #161b27 100%);
+        color: #ffffff;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        right: 38px;
+        top: 38px;
+        width: 290px;
+        height: 290px;
+        border-radius: 80px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .hero__top {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .hero__back {
+        width: 64px;
+        height: 64px;
+        border-radius: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+        font-size: 34px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .hero__badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 60px;
+        padding: 0 24px;
+        border-radius: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.06);
+        font-weight: 800;
+        font-size: 18px;
+      }
+
+      .hero__body {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: calc(100% - 90px);
+        padding-top: 84px;
+      }
+
+      .hero__logo {
+        width: 220px;
+        height: auto;
+        display: block;
+      }
+
+      .hero h1 {
+        margin: 0;
+        max-width: 420px;
+        font-size: clamp(44px, 5vw, 72px);
+        line-height: 0.96;
+        letter-spacing: 0;
+      }
+
+      .hero p {
+        margin: 0;
+        max-width: 520px;
+        color: rgba(255, 255, 255, 0.84);
+        font-size: 18px;
+        line-height: 1.42;
+      }
+
+      .hero__place {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 20px 22px;
+        border-radius: 28px 28px 0 0;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(118, 138, 176, 0.22);
+        width: min(100%, 620px);
+      }
+
+      .hero__place-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        background: rgba(255, 255, 255, 0.08);
+        font-size: 28px;
+      }
+
+      .hero__place strong {
+        display: block;
+        font-size: 18px;
+      }
+
+      .hero__place span {
+        display: block;
+        margin-top: 4px;
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 15px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(222, 226, 235, 0.92);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .card__top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 30px 28px 24px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .card__brand {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .card__brand-back {
+        width: 74px;
+        height: 74px;
+        border-radius: 24px;
+        border: 1px solid #d8dde9;
+        background: #f4f6fb;
+        color: var(--accent-dark);
+        font-size: 38px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .card__brand-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .card__brand-copy strong {
+        font-size: 28px;
+        line-height: 1;
+      }
+
+      .card__brand-copy span {
+        color: #66707f;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .card__logo {
+        width: 116px;
+        height: auto;
+      }
+
+      .card__body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 28px;
+      }
+
+      .mode-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 8px;
+        border-radius: 28px;
+        background: #f0f2f7;
+        border: 1px solid var(--line);
+      }
+
+      .mode-switch__button {
+        min-height: 72px;
+        border: 0;
+        border-radius: 22px;
+        background: transparent;
+        color: #6c6169;
+        font-size: 18px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .mode-switch__button.is-active {
+        background: var(--accent-dark);
+        color: #fff;
+      }
+
+      .section-label {
+        margin-top: 24px;
+        color: var(--accent);
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .section-title {
+        margin: 10px 0 0;
+        font-size: clamp(28px, 4vw, 42px);
+        line-height: 1.06;
+      }
+
+      .section-copy {
+        margin: 10px 0 0;
+        color: #6c7482;
+        font-size: 18px;
+        line-height: 1.42;
+      }
+
+      .error {
+        display: none;
+        margin-top: 18px;
+        padding: 16px 18px;
+        border-radius: 20px;
+        border: 1px solid #f1ccd5;
+        background: var(--accent-soft);
+        color: #9c1d39;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.4;
+      }
+
+      .error.is-visible {
+        display: block;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 24px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 16px;
+        font-weight: 800;
+      }
+
+      .input {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-height: 76px;
+        padding: 0 22px;
+        border-radius: 24px;
+        border: 1px solid #dfe3ec;
+        background: #f9fbff;
+      }
+
+      .input__icon {
+        color: #79676d;
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .input input {
+        width: 100%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--text);
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .primary-button,
+      .secondary-link {
+        border: 0;
+        cursor: pointer;
+        font: inherit;
+      }
+
+      .primary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 76px;
+        margin-top: 4px;
+        border-radius: 28px;
+        background: var(--accent-dark);
+        color: #fff;
+        font-size: 20px;
+        font-weight: 800;
+      }
+
+      .primary-button[disabled] {
+        opacity: 0.72;
+        cursor: wait;
+      }
+
+      .spinner {
+        width: 26px;
+        height: 26px;
+        border: 3px solid rgba(255, 255, 255, 0.25);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      .footer-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        margin-top: 20px;
+        align-items: center;
+      }
+
+      .secondary-link {
+        background: transparent;
+        padding: 0;
+        color: var(--accent);
+        font-size: 16px;
+        font-weight: 800;
+      }
+
+      .secondary-link.secondary-link--muted {
+        color: #675b63;
+      }
+
+      .helper {
+        margin-top: auto;
+        padding-top: 22px;
+        color: #7a7277;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .helper a {
+        color: var(--accent);
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 980px) {
+        body {
+          padding: 14px;
+        }
+
+        .shell {
+          grid-template-columns: 1fr;
+        }
+
+        .hero,
+        .card {
+          min-height: auto;
+        }
+
+        .hero {
+          padding: 24px;
+        }
+
+        .hero::after {
+          width: 180px;
+          height: 180px;
+          top: 24px;
+          right: 24px;
+          border-radius: 44px;
+        }
+
+        .hero__body {
+          gap: 28px;
+          height: auto;
+          padding-top: 36px;
+        }
+
+        .hero h1 {
+          max-width: 340px;
+          font-size: clamp(38px, 12vw, 58px);
+        }
+
+        .card__top,
+        .card__body {
+          padding: 22px;
+        }
+
+        .card__brand-back {
+          width: 62px;
+          height: 62px;
+          font-size: 32px;
+        }
+
+        .card__brand-copy strong {
+          font-size: 22px;
+        }
+
+        .card__brand-copy span {
+          font-size: 15px;
+        }
+
+        .card__logo {
+          width: 92px;
+        }
+
+        .mode-switch__button,
+        .input,
+        .primary-button {
+          min-height: 64px;
+        }
+
+        .input input {
+          font-size: 18px;
+        }
+
+        .footer-actions {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div class="hero__top">
+          <button
+            class="hero__back"
+            type="button"
+            aria-label="Zurueck"
+            onclick="window.location.href='/'"
+          >
+            ←
+          </button>
+          <div class="hero__badge">Business Studio</div>
+        </div>
+
+        <div class="hero__body">
+          <div>
+            <img
+              class="hero__logo"
+              src="/assets/branding/spargo_complete_logo.png"
+              alt="sparGO"
+            />
+            <h1>Verifiziert. Verbunden. Live.</h1>
+            <p>
+              Business einloggen, Studio oeffnen und direkt an den eigenen
+              Coupons, Stories und Profilen weiterarbeiten.
+            </p>
+          </div>
+
+          <div class="hero__place">
+            <div class="hero__place-icon">⌕</div>
+            <div>
+              <strong>Business Studio direkt im Web</strong>
+              <span>Login hier, Dashboard danach direkt in sparGO.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card__top">
+          <div class="card__brand">
+            <button
+              class="card__brand-back"
+              type="button"
+              aria-label="Zurueck"
+              onclick="window.location.href='/'"
+            >
+              ←
+            </button>
+            <div class="card__brand-copy">
+              <strong>sparGO Business</strong>
+              <span id="mode-label">Login</span>
+            </div>
+          </div>
+          <img
+            class="card__logo"
+            src="/assets/branding/spargo_complete_logo.png"
+            alt="sparGO"
+          />
+        </div>
+
+        <div class="card__body">
+          <div class="mode-switch" aria-label="Modus">
+            <button
+              class="mode-switch__button is-active"
+              id="mode-login"
+              type="button"
+            >
+              Einloggen
+            </button>
+            <button
+              class="mode-switch__button"
+              id="mode-register"
+              type="button"
+            >
+              Registrieren
+            </button>
+          </div>
+
+          <div class="section-label">Studio Login</div>
+          <h1 class="section-title" id="section-title">Business einloggen</h1>
+          <p class="section-copy" id="section-copy">
+            Mit Mail und Passwort direkt ins Studio.
+          </p>
+
+          <div class="error" id="error-box"></div>
+
+          <form id="login-form" novalidate>
+            <div>
+              <label for="email">Business-E-Mail</label>
+              <div class="input">
+                <span class="input__icon">✉</span>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="username"
+                  placeholder="info@dein-business.de"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="password">Passwort</label>
+              <div class="input">
+                <span class="input__icon">◌</span>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  placeholder="Passwort"
+                  required
+                />
+              </div>
+            </div>
+
+            <button class="primary-button" id="submit-button" type="submit">
+              <span id="submit-label">Business Login</span>
+            </button>
+          </form>
+
+          <div class="footer-actions">
+            <button class="secondary-link secondary-link--muted" id="forgot-password" type="button">
+              Passwort vergessen?
+            </button>
+            <button class="secondary-link" id="open-register" type="button">
+              Business registrieren
+            </button>
+          </div>
+
+          <p class="helper">
+            Nur fuer verifizierte Business-Konten. Wenn dein Business noch nicht
+            im Studio angelegt ist, startet die Registrierung ueber den
+            Business-Flow in sparGO.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import {
+        initializeApp,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import {
+        getAuth,
+        setPersistence,
+        browserLocalPersistence,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        sendPasswordResetEmail,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCTws8W3sDGLxIuxHj5X00ckasJhxBaaJs",
+        appId: "1:939702805071:web:5b40916c12194756c2c03a",
+        messagingSenderId: "939702805071",
+        projectId: "spargo-app",
+        authDomain: "spargo-app.firebaseapp.com",
+        storageBucket: "spargo-app.firebasestorage.app",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      const loginForm = document.getElementById("login-form");
+      const submitButton = document.getElementById("submit-button");
+      const submitLabel = document.getElementById("submit-label");
+      const errorBox = document.getElementById("error-box");
+      const emailInput = document.getElementById("email");
+      const passwordInput = document.getElementById("password");
+      const modeLogin = document.getElementById("mode-login");
+      const modeRegister = document.getElementById("mode-register");
+      const modeLabel = document.getElementById("mode-label");
+      const sectionTitle = document.getElementById("section-title");
+      const sectionCopy = document.getElementById("section-copy");
+      const forgotPassword = document.getElementById("forgot-password");
+      const openRegister = document.getElementById("open-register");
+
+      let bootResolved = false;
+
+      function setError(message = "") {
+        const resolved = message.trim();
+        errorBox.textContent = resolved;
+        errorBox.classList.toggle("is-visible", resolved.length > 0);
+      }
+
+      function setBusy(busy, label = "Business Login") {
+        submitButton.disabled = busy;
+        submitLabel.textContent = label;
+        if (busy) {
+          submitLabel.innerHTML = '<span class="spinner" aria-hidden="true"></span>';
+        } else {
+          submitLabel.textContent = label;
+        }
+      }
+
+      function dashboardTarget(userData) {
+        const ownedBusinessId = `${userData.ownedBusinessId ?? ""}`.trim();
+        const onboardingComplete = userData.businessOnboardingComplete === true;
+        return ownedBusinessId && onboardingComplete
+          ? "/app/#/business-dashboard"
+          : "/app/#/business-onboarding";
+      }
+
+      function friendlyError(error) {
+        const code = `${error?.code ?? ""}`.toLowerCase();
+        const message = `${error?.message ?? error ?? ""}`.trim();
+
+        if (
+          code.includes("invalid-email") ||
+          code.includes("auth/invalid-email")
+        ) {
+          return "Die E-Mail-Adresse ist nicht gueltig.";
+        }
+        if (
+          code.includes("wrong-password") ||
+          code.includes("invalid-credential") ||
+          code.includes("user-not-found") ||
+          code.includes("auth/wrong-password") ||
+          code.includes("auth/invalid-credential") ||
+          code.includes("auth/user-not-found")
+        ) {
+          return "E-Mail oder Passwort stimmen nicht.";
+        }
+        if (code.includes("too-many-requests")) {
+          return "Zu viele Versuche. Bitte kurz spaeter nochmal.";
+        }
+        if (code.includes("network-request-failed")) {
+          return "Netzwerkfehler. Bitte pruefe deine Verbindung.";
+        }
+
+        if (message.length > 0) {
+          return message
+            .replace("Firebase: ", "")
+            .replace("Error: ", "")
+            .replace("Exception: ", "");
+        }
+        return "Business-Login konnte gerade nicht abgeschlossen werden.";
+      }
+
+      async function loadBusinessProfile(user) {
+        const snapshot = await getDoc(doc(db, "users", user.uid));
+        if (!snapshot.exists()) {
+          throw new Error("Business-Profil wurde nicht gefunden.");
+        }
+
+        const data = snapshot.data();
+        const ownedBusinessId = `${data.ownedBusinessId ?? ""}`.trim();
+        const isBusiness =
+          data.accountType === "business" || ownedBusinessId.length > 0;
+
+        if (!isBusiness) {
+          await signOut(auth);
+          throw new Error(
+            "Dieses Konto hat keinen Business-Zugang. Bitte nutze den normalen Nutzer-Login."
+          );
+        }
+
+        return data;
+      }
+
+      async function goToStudio(user) {
+        const userData = await loadBusinessProfile(user);
+        window.location.replace(dashboardTarget(userData));
+      }
+
+      async function initAuth() {
+        await setPersistence(auth, browserLocalPersistence);
+
+        onAuthStateChanged(auth, async (user) => {
+          if (bootResolved) {
+            return;
+          }
+          bootResolved = true;
+
+          if (!user) {
+            return;
+          }
+
+          try {
+            setBusy(true, "Studio wird geoeffnet...");
+            await goToStudio(user);
+          } catch (error) {
+            setBusy(false);
+            setError(friendlyError(error));
+          }
+        });
+      }
+
+      modeLogin.addEventListener("click", () => {
+        setError("");
+        modeLogin.classList.add("is-active");
+        modeRegister.classList.remove("is-active");
+        modeLabel.textContent = "Login";
+        sectionTitle.textContent = "Business einloggen";
+        sectionCopy.textContent = "Mit Mail und Passwort direkt ins Studio.";
+      });
+
+      modeRegister.addEventListener("click", () => {
+        window.location.href = "/app/#/business-register";
+      });
+
+      openRegister.addEventListener("click", () => {
+        window.location.href = "/app/#/business-register";
+      });
+
+      forgotPassword.addEventListener("click", async () => {
+        setError("");
+        const email = emailInput.value.trim();
+        if (!email) {
+          setError("Bitte gib zuerst deine Business-E-Mail ein.");
+          return;
+        }
+
+        try {
+          await sendPasswordResetEmail(auth, email);
+          setError("Reset-Link wurde an deine Business-E-Mail gesendet.");
+        } catch (error) {
+          setError(friendlyError(error));
+        }
+      });
+
+      loginForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        setError("");
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (!email || !password) {
+          setError("Bitte gib Business-E-Mail und Passwort ein.");
+          return;
+        }
+
+        try {
+          setBusy(true, "Business Login");
+          const credential = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+          await goToStudio(credential.user);
+        } catch (error) {
+          setBusy(false);
+          setError(friendlyError(error));
+        }
+      });
+
+      initAuth().catch((error) => {
+        setBusy(false);
+        setError(friendlyError(error));
+      });
+    </script>
+  </body>
+</html>

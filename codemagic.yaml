@@ -1,0 +1,62 @@
+workflows:
+  firebase-test-lab-release:
+    name: Firebase Test Lab release
+    instance_type: mac_mini_m2
+    max_build_duration: 120
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      groups:
+        - firebase-test-lab
+        - ios-signing
+      vars:
+        BUNDLE_ID: com.example.spargo
+        FIREBASE_ANDROID_DEVICE: model=Pixel2,version=30,locale=de,orientation=portrait
+        FIREBASE_IOS_DEVICE: model=iphone14,version=16.6,locale=de_DE,orientation=portrait
+        FIREBASE_TEST_TIMEOUT: 12m
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+        - ~/.gradle/caches
+        - ~/.gradle/wrapper
+        - ~/Library/Caches/CocoaPods
+    scripts:
+      - name: Resolve Flutter packages
+        script: flutter pub get
+      - name: Authenticate Firebase Test Lab
+        script: bash tool/ci/write_firebase_credentials.sh
+      - name: Flutter tests and analyzer
+        script: |
+          flutter test test/widget_test.dart
+          flutter analyze --no-fatal-warnings --no-fatal-infos
+      - name: Android on Firebase Test Lab
+        script: bash tool/ci/run_android_firebase_test_lab.sh
+      - name: Prepare iOS signing
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_DEVELOPMENT --create
+          keychain add-certificates
+      - name: Build iOS XCTest archive
+        script: bash tool/ci/build_ios_xctest.sh
+      - name: iPhone on Firebase Test Lab
+        script: bash tool/ci/run_ios_firebase_test_lab.sh
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      - build/ios_firebase_test_lab/ios_tests.zip
+      - build/**/outputs/**/*.xml
+      - firebase-debug.log
+    publishing:
+      email:
+        recipients:
+          - markuskara25@gmail.com
+        notify:
+          success: true
+          failure: true

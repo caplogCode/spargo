@@ -1,0 +1,97 @@
+name: spargo
+description: "Premium local discovery and social perks app built with Flutter."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  dotted_border: ^2.1.0
+  flutter_animate: ^4.5.2
+  flutter_riverpod: ^2.6.1
+  file_picker: ^8.0.7
+  geolocator: ^14.0.2
+  google_maps_flutter: ^2.13.0
+  google_fonts: ^6.3.2
+  google_sign_in: ^6.3.0
+  http: ^1.5.0
+  shared_preferences: ^2.5.3
+  smooth_page_indicator: ^2.0.1
+  url_launcher: ^6.3.2
+  firebase_core: ^4.7.0
+  firebase_auth: ^6.4.0
+  cloud_firestore: ^6.3.0
+  firebase_storage: ^13.3.0
+  concentric_transition: ^1.0.3
+  ionicons: ^0.2.2
+  confetti: ^0.8.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.3
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/branding/spargo_splashscreen.png
+    - assets/branding/spargo_applogo.png
+    - assets/branding/spargo_go_black.png
+    - assets/branding/spargo_complete_logo.png
+    - assets/branding/spargo_onboarding_logo.png
+    - assets/onboarding/
+    - assets/i18n/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/branding/spargo_applogo.png
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: assets/branding/spargo_applogo.png
+    background_color: "#FFFFFF"
+    theme_color: "#DB2149"
+  windows:
+    generate: true
+    image_path: assets/branding/spargo_applogo.png
+    icon_size: 256
+  macos:
+    generate: true
+    image_path: assets/branding/spargo_applogo.png

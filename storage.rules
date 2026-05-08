@@ -1,0 +1,99 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function businessDoc(businessId) {
+      return firestore.get(/databases/(default)/documents/businesses/$(businessId));
+    }
+
+    function userDoc(userId) {
+      return firestore.get(/databases/(default)/documents/users/$(userId));
+    }
+
+    function businessExists(businessId) {
+      return firestore.exists(/databases/(default)/documents/businesses/$(businessId));
+    }
+
+    function userExists(userId) {
+      return firestore.exists(/databases/(default)/documents/users/$(userId));
+    }
+
+    function isBusinessOwner(businessId) {
+      return signedIn() &&
+          businessExists(businessId) &&
+          businessDoc(businessId).data.ownerId == request.auth.uid;
+    }
+
+    function isAssignedBusinessUser(businessId) {
+      return signedIn() &&
+          businessExists(businessId) &&
+          businessDoc(businessId).data.assignedUserIds is list &&
+          request.auth.uid in businessDoc(businessId).data.assignedUserIds;
+    }
+
+    function isUidScopedBusinessId(businessId) {
+      return signedIn() &&
+          businessId == 'business_' + request.auth.uid;
+    }
+
+    function userOwnsBusinessInProfile(businessId) {
+      return signedIn() &&
+          userExists(request.auth.uid) &&
+          userDoc(request.auth.uid).data.ownedBusinessId == businessId;
+    }
+
+    function isOwnVerificationUpload(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function isAllowedBusinessEvidenceUpload() {
+      return request.resource != null &&
+          request.resource.size < 15 * 1024 * 1024 &&
+          request.resource.contentType != null &&
+          (
+            request.resource.contentType.matches('image/.*') ||
+            request.resource.contentType.matches('application/pdf')
+          );
+    }
+
+    function isBusinessMember(businessId) {
+      return isUidScopedBusinessId(businessId) ||
+          isBusinessOwner(businessId) ||
+          isAssignedBusinessUser(businessId) ||
+          userOwnsBusinessInProfile(businessId);
+    }
+
+    match /businesses/{businessId}/logo.png {
+      allow read: if true;
+      allow write: if isBusinessMember(businessId);
+    }
+
+    match /businesses/{businessId}/cover.jpg {
+      allow read: if true;
+      allow write: if isBusinessMember(businessId);
+    }
+
+    match /businesses/{businessId}/stories/{fileName} {
+      allow read: if true;
+      allow write: if isBusinessMember(businessId);
+    }
+
+    match /businesses/{businessId}/deals/{fileName} {
+      allow read: if true;
+      allow write: if isBusinessMember(businessId);
+    }
+
+    match /business-verification/{userId}/{placeId}/{fileName} {
+      allow read: if isOwnVerificationUpload(userId);
+      allow write: if isOwnVerificationUpload(userId) &&
+          isAllowedBusinessEvidenceUpload();
+    }
+
+    match /users/{userId}/redemptions/{redemptionId}/{fileName} {
+      allow read, write: if signedIn() && request.auth.uid == userId;
+    }
+  }
+}

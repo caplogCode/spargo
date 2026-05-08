@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "939702805071",
+    "project_id": "spargo-app",
+    "storage_bucket": "spargo-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:939702805071:android:723aac71ca06f051c2c03a",
+        "android_client_info": {
+          "package_name": "com.example.spargo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzm9R5O_fwLabBnve2SejGHy96202LWyM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

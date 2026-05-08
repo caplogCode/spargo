@@ -1,0 +1,33 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "publicCouponBusinesses",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "cacheVisibility",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "cacheRequestKey",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "publicCouponDeals",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "cacheVisibility",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "cacheRequestKey",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

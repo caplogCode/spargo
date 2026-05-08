@@ -1,0 +1,120 @@
+import '../../domain/models/engagement_models.dart';
+
+final mockReviews = <AppReview>[
+  const AppReview(
+    id: 'review_1',
+    authorName: 'Mira Hartmann',
+    authorInitials: 'MH',
+    rating: 5,
+    comment:
+        'Super klar einlösbar, netter Service und der Vorteil war direkt nachvollziehbar.',
+    timeLabel: 'vor 1 h',
+    helpfulCount: 18,
+    city: 'Bremen',
+    dealId: 'deal_pflastergold_brunch',
+    businessId: 'pflastergold',
+  ),
+  const AppReview(
+    id: 'review_2',
+    authorName: 'Noah Eilers',
+    authorInitials: 'NE',
+    rating: 4,
+    comment:
+        'Guter Deal für zwei. Das Personal kannte den Code sofort, genau so soll es sein.',
+    timeLabel: 'vor 4 h',
+    helpfulCount: 11,
+    city: 'Bremen',
+    dealId: 'deal_ember_duo',
+    businessId: 'ember_bean',
+  ),
+  const AppReview(
+    id: 'review_3',
+    authorName: 'Sina Vogt',
+    authorInitials: 'SV',
+    rating: 5,
+    comment:
+        'Nordlicht fühlt sich hochwertig an, Deal war schön erklaert und ohne Stress nutzbar.',
+    timeLabel: 'Gestern',
+    helpfulCount: 9,
+    city: 'Bremen',
+    dealId: 'deal_nordlicht_glow',
+    businessId: 'nordlicht_atelier',
+  ),
+  const AppReview(
+    id: 'review_4',
+    authorName: 'Jule Kramer',
+    authorInitials: 'JK',
+    rating: 5,
+    comment:
+        'Studio Marea ist jedes Mal stark. Besonders gut: kein awkward Einlösen am Empfang.',
+    timeLabel: 'Gestern',
+    helpfulCount: 7,
+    city: 'Bremen',
+    dealId: 'deal_marea_reformer',
+    businessId: 'studio_marea',
+  ),
+  const AppReview(
+    id: 'review_5',
+    authorName: 'Pia Norden',
+    authorInitials: 'PN',
+    rating: 4,
+    comment:
+        'Schickes Business-Profil, gute Atmosphäre und fairer Vorteil für spontan am Abend.',
+    timeLabel: 'vor 2 Tagen',
+    helpfulCount: 6,
+    city: 'Bremen',
+    businessId: 'haus_am_strom',
+  ),
+  const AppReview(
+    id: 'review_6',
+    authorName: 'Tom Burmester',
+    authorInitials: 'TB',
+    rating: 5,
+    comment:
+        'Als Hidden Gem top. Genau solche Coupons will ich in der App sehen.',
+    timeLabel: 'vor 3 Tagen',
+    helpfulCount: 12,
+    city: 'Köln',
+    dealId: 'deal_kante_lamps',
+    businessId: 'kante_elf',
+  ),
+];
+
+final mockLeaderboard = <LeaderboardEntry>[
+  const LeaderboardEntry(
+    id: 'leader_1',
+    name: 'Mina Busch',
+    city: 'Bremen',
+    points: 860,
+    rank: 1,
+    freeCouponCredits: 3,
+    isCurrentUser: false,
+  ),
+  const LeaderboardEntry(
+    id: 'leader_2',
+    name: 'Jannis Tegtmeier',
+    city: 'Bremen',
+    points: 640,
+    rank: 2,
+    freeCouponCredits: 2,
+    isCurrentUser: false,
+  ),
+  const LeaderboardEntry(
+    id: 'leader_3',
+    name: 'Lina Mertens',
+    city: 'Bremen',
+    points: 470,
+    rank: 3,
+    freeCouponCredits: 1,
+    isCurrentUser: false,
+  ),
+  const LeaderboardEntry(
+    id: 'leader_4',
+    name: 'Kai Lorenz',
+    city: 'Bremen',
+    points: 380,
+    rank: 4,
+    freeCouponCredits: 1,
+    isCurrentUser: false,
+  ),
+];
