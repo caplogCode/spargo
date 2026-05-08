@@ -11,7 +11,7 @@ jobs:
     name: Android APK
     runs-on: ubuntu-latest
     env:
-      FIREBASE_ANDROID_APP_ID: 1:939702805071:android:723aac71ca06f051c2c03a
+      FIREBASE_ANDROID_APP_ID: 1:939702805071:android:6f8618d46bd56c6cc2c03a
       FIREBASE_SERVICE_ACCOUNT_JSON_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 }}
       TESTER_EMAILS: markuskara25@gmail.com,benny_g_@outlook.com,suekrue.goektas@outlook.com
     steps:

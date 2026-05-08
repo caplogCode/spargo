@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCzm9R5O_fwLabBnve2SejGHy96202LWyM',
-    appId: '1:939702805071:android:723aac71ca06f051c2c03a',
+    appId: '1:939702805071:android:6f8618d46bd56c6cc2c03a',
     messagingSenderId: '939702805071',
     projectId: 'spargo-app',
     storageBucket: 'spargo-app.firebasestorage.app',
@@ -59,20 +59,20 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBtPN-gFzZwXhNZE-FQzZOGuuWwEX4aRz4',
-    appId: '1:939702805071:ios:e371f913cf0e0f9ec2c03a',
+    appId: '1:939702805071:ios:30d6e7274bfa9006c2c03a',
     messagingSenderId: '939702805071',
     projectId: 'spargo-app',
     storageBucket: 'spargo-app.firebasestorage.app',
-    iosBundleId: 'com.example.spargo',
+    iosBundleId: 'com.spargointeractive.spargo',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyBtPN-gFzZwXhNZE-FQzZOGuuWwEX4aRz4',
-    appId: '1:939702805071:ios:e371f913cf0e0f9ec2c03a',
+    appId: '1:939702805071:ios:30d6e7274bfa9006c2c03a',
     messagingSenderId: '939702805071',
     projectId: 'spargo-app',
     storageBucket: 'spargo-app.firebasestorage.app',
-    iosBundleId: 'com.example.spargo',
+    iosBundleId: 'com.spargointeractive.spargo',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

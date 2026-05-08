@@ -11,7 +11,7 @@ workflows:
         - firebase-test-lab
         - ios-signing
       vars:
-        BUNDLE_ID: com.example.spargo
+        BUNDLE_ID: com.spargointeractive.spargo
         IOS_EXPORT_METHOD: ad-hoc
         FIREBASE_ANDROID_DEVICE: model=Pixel2,version=30,locale=de,orientation=portrait
         FIREBASE_IOS_DEVICE: model=iphone14,version=16.6,locale=de_DE,orientation=portrait

@@ -7,12 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:939702805071:android:723aac71ca06f051c2c03a",
+        "mobilesdk_app_id": "1:939702805071:android:6f8618d46bd56c6cc2c03a",
         "android_client_info": {
-          "package_name": "com.example.spargo"
+          "package_name": "com.spargointeractive.spargo"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "939702805071-4cuu009ssapo69807ts5dqfjdi4998f5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCzm9R5O_fwLabBnve2SejGHy96202LWyM"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "939702805071-4cuu009ssapo69807ts5dqfjdi4998f5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "939702805071-40ko3em3htj99s99vt96osjthmh8hr3h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.spargointeractive.spargo"
+              }
+            }
+          ]
         }
       }
     }

@@ -1,4 +1,4 @@
-package com.example.spargo
+package com.spargointeractive.spargo
 
 import android.view.WindowManager
 import io.flutter.embedding.android.FlutterActivity

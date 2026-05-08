@@ -2427,7 +2427,7 @@ class FirebaseAppRepository {
     final actionCodeSettings = firebase_auth.ActionCodeSettings(
       url: continueUrl.toString(),
       handleCodeInApp: false,
-      androidPackageName: 'com.example.spargo',
+      androidPackageName: 'com.spargointeractive.spargo',
       androidInstallApp: true,
       iOSBundleId: DefaultFirebaseOptions.ios.iosBundleId,
     );

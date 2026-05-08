@@ -36,6 +36,13 @@ GitHub-Secrets gesetzt sind:
 Ohne Apple-Signing-Secrets kann iOS nur als unsigned Diagnose-Build gebaut
 werden; installierbare IPA-Auslieferung braucht immer Apple-Signing.
 
+Aktuelle mobile App-IDs:
+
+- Android package: `com.spargointeractive.spargo`
+- Android Firebase App ID: `1:939702805071:android:6f8618d46bd56c6cc2c03a`
+- iOS bundle: `com.spargointeractive.spargo`
+- iOS Firebase App ID: `1:939702805071:ios:30d6e7274bfa9006c2c03a`
+
 ## Codemagic Environment Groups
 
 Lege in Codemagic zwei Environment Groups an.
