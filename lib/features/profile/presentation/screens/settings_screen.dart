@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Text;
 import 'package:spargo/shared/widgets/auto_translate_text.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
@@ -485,9 +484,8 @@ class _RadiusPreviewCard extends StatelessWidget {
     final resolvedLocationLabel = locationLabel.trim().isEmpty
         ? 'Deutschland'
         : locationLabel;
-    final useGoogleMap = hasGoogleMapsApiKey && !kIsWeb;
+    final useGoogleMap = hasGoogleMapsApiKey;
     final showStaticGoogleMap = !useGoogleMap;
-
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
@@ -725,22 +723,19 @@ class _StaticRadiusMap extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth.isFinite
-            ? (constraints.maxWidth.round().clamp(220, 640) as num).toInt()
+            ? constraints.maxWidth.round().clamp(220, 640)
             : 640;
         final height = constraints.maxHeight.isFinite
-            ? (constraints.maxHeight.round().clamp(220, 640) as num).toInt()
+            ? constraints.maxHeight.round().clamp(220, 640)
             : 480;
         final metersPerPixel = _metersPerPixel(
           latitude: center.latitude,
           zoom: zoom,
         );
-        final radiusPixels =
-            (((radiusKm * 1000) / metersPerPixel).clamp(
-                      18,
-                      math.min(width, height) * 0.92,
-                    )
-                    as num)
-                .toDouble();
+        final radiusPixels = ((radiusKm * 1000) / metersPerPixel).clamp(
+          18.0,
+          math.min(width, height) * 0.92,
+        );
 
         return Stack(
           alignment: Alignment.center,
@@ -801,7 +796,7 @@ class _StaticRadiusMap extends StatelessWidget {
     final latitudeRadians = latitude * (math.pi / 180);
     return 156543.03392 *
         math.cos(latitudeRadians) /
-        (math.pow(2, zoom) as num).toDouble();
+        math.pow(2, zoom).toDouble();
   }
 
   String _buildStaticMapUrl({required int width, required int height}) {

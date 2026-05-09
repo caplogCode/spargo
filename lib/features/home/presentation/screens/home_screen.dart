@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart' hide Text;
+import 'package:flutter/services.dart';
 import 'package:spargo/shared/widgets/auto_translate_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
@@ -264,9 +265,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
       ),
     );
-    final content = Stack(
-      fit: StackFit.expand,
-      children: <Widget>[const _HomeAmbientGlow(), scrollContent],
+    final content = AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: const Color(0xFFFFFAFC),
+        systemNavigationBarColor: const Color(0xFFFFFAFC),
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[const _HomeAmbientGlow(), scrollContent],
+      ),
     );
 
     if (widget.embedded) {
@@ -308,20 +316,21 @@ class _HomeAmbientGlow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Positioned(
-      top: -124,
+    final topPadding = MediaQuery.paddingOf(context).top;
+    return Positioned(
+      top: topPadding + 84,
       right: -118,
       child: IgnorePointer(
         child: RepaintBoundary(
           child: SizedBox(
             width: 320,
             height: 320,
-            child: DecoratedBox(
+            child: const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: RadialGradient(
                   colors: <Color>[
-                    Color(0x33FF2D63),
-                    Color(0x18FFB6CB),
+                    Color(0x30DB2149),
+                    Color(0x18F06B84),
                     Color(0x00FFFFFF),
                   ],
                   stops: <double>[0, 0.42, 1],
@@ -661,7 +670,6 @@ class _HomeCategoryRail extends StatelessWidget {
               child: _HomeCategoryTile(
                 label: _items[index].label,
                 icon: _items[index].icon,
-                selected: index == 0,
                 onTap: () => onCategoryTap(_items[index].category),
               ),
             ),
@@ -671,7 +679,6 @@ class _HomeCategoryRail extends StatelessWidget {
             child: _HomeCategoryTile(
               label: 'Mehr',
               icon: Ionicons.grid_outline,
-              selected: false,
               onTap: onMoreTap,
             ),
           ),
@@ -697,19 +704,17 @@ class _HomeCategoryTile extends StatelessWidget {
   const _HomeCategoryTile({
     required this.label,
     required this.icon,
-    required this.selected,
     required this.onTap,
   });
 
   final String label;
   final IconData icon;
-  final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = selected ? AppColors.primary : const Color(0xFF2A2427);
+    const color = Color(0xFF2A2427);
 
     return InkWell(
       onTap: onTap,
@@ -721,7 +726,7 @@ class _HomeCategoryTile extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: selected ? const Color(0xFFFFE8EF) : Colors.white,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(22),
               boxShadow: <BoxShadow>[
                 BoxShadow(
@@ -905,26 +910,17 @@ class _SpargoStoryBubble extends StatelessWidget {
                           color: Colors.white,
                         ),
                         child: Container(
+                          clipBehavior: Clip.antiAlias,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: <Color>[
-                                AppColors.primary,
-                                Color(0xFFFF4D78),
-                              ],
-                            ),
+                            color: AppColors.primary,
                           ),
                           alignment: Alignment.center,
-                          child: const Text(
-                            'sparGO',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 0,
-                            ),
+                          child: Image.asset(
+                            'assets/branding/spargo_applogo.png',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
                           ),
                         ),
                       ),

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Text;
@@ -133,6 +132,12 @@ class _DiscoveryMapSurfaceState extends State<DiscoveryMapSurface> {
     if (oldWidget.pins != widget.pins) {
       _prepareMarkerIcons();
     }
+  }
+
+  @override
+  void dispose() {
+    _mapController?.dispose();
+    super.dispose();
   }
 
   String _markerCacheKey(DiscoveryMapPin pin) {

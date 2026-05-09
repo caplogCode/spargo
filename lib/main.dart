@@ -113,7 +113,7 @@ class _BootstrapGateState extends State<_BootstrapGate> {
               MaterialPageRoute<void>(
                 settings: RouteSettings(name: initialRoute),
                 builder: (_) => Scaffold(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: AppColors.background,
                   body: SafeArea(
                     child: Center(
                       child: Padding(
@@ -124,11 +124,45 @@ class _BootstrapGateState extends State<_BootstrapGate> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            SizedBox(
-                              width: 180,
-                              child: Image.asset(
-                                'assets/branding/spargo_splashscreen.png',
-                                fit: BoxFit.contain,
+                            Container(
+                              width: 236,
+                              height: 138,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.72),
+                                borderRadius: BorderRadius.circular(34),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.10,
+                                    ),
+                                    blurRadius: 38,
+                                    offset: const Offset(0, 20),
+                                  ),
+                                ],
+                              ),
+                              child: RichText(
+                                text: const TextSpan(
+                                  style: TextStyle(
+                                    fontSize: 56,
+                                    fontWeight: FontWeight.w900,
+                                    height: 0.95,
+                                    letterSpacing: 0,
+                                  ),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: 'spar',
+                                      style: TextStyle(color: AppColors.ink),
+                                    ),
+                                    TextSpan(
+                                      text: 'GO',
+                                      style: TextStyle(
+                                        color: AppColors.primary,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             const SizedBox(height: 28),
@@ -137,7 +171,7 @@ class _BootstrapGateState extends State<_BootstrapGate> {
                                 'Verbindung wird neu aufgebaut.',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors.textPrimary,
                                   fontSize: 22,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -149,7 +183,7 @@ class _BootstrapGateState extends State<_BootstrapGate> {
                                     : '${snapshot.error}',
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: AppColors.textSecondary,
                                   fontSize: 14,
                                   height: 1.4,
                                 ),

@@ -150,7 +150,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final language = ref.watch(appLanguageControllerProvider);
     final copy = _LoginCopy.forCode(language.languageCode);
     final content = AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark,
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: const Color(0xFFFCFAFD),
+        systemNavigationBarColor: const Color(0xFFFCFAFD),
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
       child: MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
         child: Stack(
@@ -262,7 +266,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   AppColors.primary,
                   Color(0xFFFF86A0),
                   Color(0xFFFFC2D0),
-                  Color(0xFF9CD7FF),
+                  Color(0xFFFFE2EA),
                   Colors.white,
                 ],
               ),
@@ -731,14 +735,61 @@ class _LoginBackdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        const Positioned.fill(child: ColoredBox(color: Color(0xFFFCFAFD))),
-        const Positioned.fill(
-          child: CustomPaint(painter: _LoginBackdropPainter()),
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: <Color>[
+            Color(0xFFFFFCFD),
+            Color(0xFFFFF7FA),
+            Color(0xFFFFFFFF),
+          ],
         ),
-        child,
-      ],
+      ),
+      child: Stack(
+        children: <Widget>[
+          const Positioned(
+            right: -130,
+            top: 88,
+            child: _LoginRedGlow(size: 310, opacity: 0.20),
+          ),
+          const Positioned(
+            left: -180,
+            bottom: -120,
+            child: _LoginRedGlow(size: 360, opacity: 0.10),
+          ),
+          child,
+        ],
+      ),
+    );
+  }
+}
+
+class _LoginRedGlow extends StatelessWidget {
+  const _LoginRedGlow({required this.size, required this.opacity});
+
+  final double size;
+  final double opacity;
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: SizedBox.square(
+        dimension: size,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              colors: <Color>[
+                AppColors.primary.withValues(alpha: opacity),
+                const Color(0xFFFF8CA3).withValues(alpha: opacity * 0.42),
+                Colors.transparent,
+              ],
+              stops: const <double>[0, 0.46, 1],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -805,7 +856,7 @@ class _LoginFormCard extends StatelessWidget {
         border: Border.all(color: const Color(0xFFF1E8ED)),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: const Color(0xFF7B6B75).withValues(alpha: 0.09),
+            color: AppColors.primary.withValues(alpha: 0.08),
             blurRadius: 36,
             spreadRadius: -12,
             offset: const Offset(0, 24),
@@ -1365,140 +1416,5 @@ class _LoginDivider extends StatelessWidget {
         const Expanded(child: Divider(color: Color(0xFFE6DDE2))),
       ],
     );
-  }
-}
-
-class _LoginBackdropPainter extends CustomPainter {
-  const _LoginBackdropPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    canvas.drawRect(
-      rect,
-      Paint()
-        ..shader = const LinearGradient(
-          colors: <Color>[
-            Color(0xFFFCFAFD),
-            Color(0xFFF9F9FD),
-            Color(0xFFFFF7FA),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ).createShader(rect),
-    );
-
-    _orb(
-      canvas,
-      Offset(-size.width * 0.05, size.height * 0.03),
-      size.width * 0.56,
-      const Color(0xFFFFE9EF),
-      0.44,
-    );
-    _orb(
-      canvas,
-      Offset(size.width * 0.92, size.height * 0.11),
-      size.width * 0.54,
-      const Color(0xFFFFD6E1),
-      0.46,
-    );
-    _orb(
-      canvas,
-      Offset(size.width * 0.82, size.height * 0.22),
-      size.width * 0.40,
-      const Color(0xFFFF2D5E),
-      0.12,
-    );
-    _orb(
-      canvas,
-      Offset(size.width * 0.74, size.height * 0.98),
-      size.width * 0.58,
-      const Color(0xFFFFDDE7),
-      0.36,
-    );
-
-    final wave = Path()
-      ..moveTo(0, size.height * 0.96)
-      ..cubicTo(
-        size.width * 0.22,
-        size.height * 1.04,
-        size.width * 0.50,
-        size.height * 1.02,
-        size.width * 0.68,
-        size.height * 0.88,
-      )
-      ..cubicTo(
-        size.width * 0.82,
-        size.height * 0.78,
-        size.width * 0.96,
-        size.height * 0.82,
-        size.width,
-        size.height * 0.76,
-      )
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-    canvas.drawPath(
-      wave,
-      Paint()
-        ..shader = LinearGradient(
-          colors: <Color>[
-            const Color(0xFFFFEEF4).withValues(alpha: 0.54),
-            Colors.white.withValues(alpha: 0.10),
-          ],
-          begin: Alignment.bottomRight,
-          end: Alignment.topLeft,
-        ).createShader(rect),
-    );
-
-    for (final sparkle in <Offset>[
-      Offset(size.width * 0.88, size.height * 0.16),
-      Offset(size.width * 0.94, size.height * 0.22),
-      Offset(size.width * 0.10, size.height * 0.96),
-    ]) {
-      _sparkle(canvas, sparkle, 4.0, 0.48);
-    }
-  }
-
-  void _orb(
-    Canvas canvas,
-    Offset center,
-    double radius,
-    Color color,
-    double alpha,
-  ) {
-    canvas.drawCircle(
-      center,
-      radius,
-      Paint()
-        ..shader = RadialGradient(
-          colors: <Color>[
-            color.withValues(alpha: alpha),
-            Colors.transparent,
-          ],
-        ).createShader(Rect.fromCircle(center: center, radius: radius)),
-    );
-  }
-
-  void _sparkle(Canvas canvas, Offset center, double radius, double alpha) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: alpha)
-      ..strokeWidth = 1.1
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(
-      Offset(center.dx - radius, center.dy),
-      Offset(center.dx + radius, center.dy),
-      paint,
-    );
-    canvas.drawLine(
-      Offset(center.dx, center.dy - radius),
-      Offset(center.dx, center.dy + radius),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _LoginBackdropPainter oldDelegate) {
-    return false;
   }
 }

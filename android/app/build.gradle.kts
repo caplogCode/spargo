@@ -56,7 +56,7 @@ android {
             (project.findProperty("GOOGLE_MAPS_API_KEY") as String?)
                 ?: localProperties.getProperty("GOOGLE_MAPS_API_KEY")
                 ?: System.getenv("GOOGLE_MAPS_API_KEY")
-                ?: "YOUR_GOOGLE_MAPS_API_KEY"
+                ?: "AIzaSyBroN53OlX6fLoZJ2ZAavMZrhQiBNOSZVI"
     }
 
     signingConfigs {

@@ -34,7 +34,12 @@ cat > "$EXPORT_OPTIONS_PLIST" <<EOF
 EOF
 
 echo "Building iOS IPA for testers..."
-flutter build ipa --release --export-options-plist="$EXPORT_OPTIONS_PLIST"
+MAPS_DEFINE=()
+if [[ -n "${GOOGLE_MAPS_API_KEY:-}" ]]; then
+  MAPS_DEFINE=(--dart-define "GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}")
+fi
+
+flutter build ipa --release "${MAPS_DEFINE[@]}" --export-options-plist="$EXPORT_OPTIONS_PLIST"
 
 IPA_COUNT="$(find build/ios/ipa -name '*.ipa' -type f | wc -l | tr -d ' ')"
 if [[ "$IPA_COUNT" = "0" ]]; then
